@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:xpenso/constants/constant_variables.dart';
+
+//**************** ReUsable text Widget ************/
+
+class MyText extends StatelessWidget {
+  final String content;
+  final double size;
+  final Color color;
+  final bool isHeader;
+  final TextOverflow overflow;
+  final int maxlines;
+  const MyText(
+      {super.key,
+      this.maxlines = 1,
+      required this.content,
+      this.size = 14,
+      this.color = Colors.black,
+      this.overflow = TextOverflow.ellipsis,
+      this.isHeader = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: GoogleFonts.poppins(
+          fontSize: size,
+          color: color,
+          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal),
+      overflow: overflow,
+      maxLines: maxlines,
+    );
+  }
+}
+
+//**************** ReUsable Button Widget ************/
+
+class MyButton extends StatefulWidget {
+  final Widget content;
+  final Function()? onPressed;
+  final double textSize;
+  final bool isBold;
+  final double height;
+  final double width;
+  final Color textcolor;
+  final Color fillColor;
+  final double rad;
+
+  const MyButton(
+      {super.key,
+      required this.content,
+      this.textSize = 15,
+      this.isBold = false,
+      this.height = 40,
+      this.width = 100,
+      this.textcolor = Colors.black,
+      this.fillColor = Colors.white,
+      this.rad = 5,
+      required this.onPressed});
+
+  @override
+  State<MyButton> createState() => _MyButtonState();
+}
+
+class _MyButtonState extends State<MyButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: widget.height,
+      width: widget.width,
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(widget.rad)),
+      child: ElevatedButton(
+          onPressed: widget.onPressed,
+          style: TextButton.styleFrom(
+              splashFactory: NoSplash.splashFactory,
+              backgroundColor: widget.fillColor,
+              elevation: 0),
+          child: widget.content),
+    );
+  }
+}
+
+//**************** ReUsable ImageIcon Widget ************/
+
+class MyImageIcon extends StatelessWidget {
+  final String path;
+  final String name;
+  final double totalSize;
+  final double iconSize;
+  final Color color;
+  const MyImageIcon(
+      {super.key,
+      required this.path,
+      required this.name,
+      this.totalSize = 65,
+      this.iconSize = 35,
+      this.color = Colors.black});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: totalSize,
+      child: Column(
+        children: [
+          ImageIcon(
+            size: iconSize,
+            AssetImage(path),
+            color: color,
+          ),
+          const SizedBox(
+            height: height10 / 2,
+          ),
+          MyText(
+            content: name,
+            size: height10,
+            color: color,
+          )
+        ],
+      ),
+    );
+  }
+}
