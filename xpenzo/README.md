@@ -6,4 +6,4 @@ Here are some of the key features of our expense tracker app:
 
 2.Reports and Analytics: You can view detailed reports and analytics to gain insights into your spending habits and financial trends. You can see your expenses by category, date range, and more, helping you make informed decisions about your finances.
 
-Overall, our expense tracker app is a powerful tool that can help you take control of your finances and achieve your financial goals. Whether you want to save for a vacation, pay off debt, or simply manage your expenses more effectively, our app is the perfect solution.
+Overall, our expense tracker app is a powerful tool that can help you take control of your finances and achieve your financial goals. Whether you want to save for a vacation, pay off debt, or simply manage your expenses more effectively, our app is the perfect solution
