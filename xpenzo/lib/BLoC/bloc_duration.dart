@@ -22,6 +22,7 @@ class MonthBloc {
       } else if (event == MonthEvent.minus) {
         date = DateTime(date.year, date.month - 1, date.day);
       } else if (event == MonthEvent.jump) {
+        date = dateSelected;
       } else if (event == MonthEvent.jump0) {
         date = DateTime.now();
       }
@@ -80,6 +81,7 @@ class YearBloc {
       } else if (event == YearEvent.minus) {
         date = DateTime(date.year - 1, date.month, date.day);
       } else if (event == YearEvent.jump) {
+        date = dateSelected;
       } else if (event == YearEvent.jump0) {
         date = DateTime.now();
       }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:xpenso/BLoC/validation_bloc.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 
 // Controllers for the Text Fields 1.Amount 2.Notes
 TextEditingController amountController = TextEditingController();
 TextEditingController notesController = TextEditingController();
+//Validator
+bool amountValid = true;
+final validatorBloc = ValidatorBloc();
 
 List<bool> selectedIndex1 = List.filled(30, false);
 
@@ -55,7 +59,7 @@ class _AddCreditState extends State<AddCredit> {
             size: fontSizeSmall,
           ),
           const SizedBox(
-            height: height10,
+            height: height20,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,23 +96,32 @@ class _AddCreditState extends State<AddCredit> {
 //******************************* Amount Text Box  ************************/
               SizedBox(
                 height: height50,
-                width: deviceWidth / 2.5,
-                child: TextFormField(
-                  controller: amountController,
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(height10 / 2),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(height10 / 2)),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        amountController.clear();
-                      },
-                      icon: const Icon(Icons.clear_rounded),
-                    ),
-                  ),
-                ),
+                width: deviceWidth / 2.3,
+                child: StreamBuilder(
+                    initialData: false,
+                    stream: validatorBloc.stateStream,
+                    builder: (context, snapshot) {
+                      return TextFormField(
+                        controller: amountController,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          errorText: amountValid == snapshot.data!
+                              ? 'Amount Should not be Empty'
+                              : null,
+                          contentPadding: const EdgeInsets.all(height10 / 2),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(height10 / 2)),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              amountController.clear();
+                            },
+                            icon: const Icon(Icons.clear_rounded),
+                          ),
+                        ),
+                      );
+                    }),
               ),
               SizedBox(
                 width: deviceWidth / 4,
@@ -139,7 +152,7 @@ class _AddCreditState extends State<AddCredit> {
           const SizedBox(
             height: height30,
           ),
-          const MyText(size: fontSizeSmall, content: 'Choose Category *'),
+          const MyText(size: fontSizeSmall, content: 'Choose Category'),
           const SizedBox(
             height: height10,
           ),

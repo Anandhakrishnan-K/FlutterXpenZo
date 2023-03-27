@@ -71,13 +71,11 @@ class _MyButtonState extends State<MyButton> {
       width: widget.width,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(widget.rad)),
-      child: ElevatedButton(
-          onPressed: widget.onPressed,
-          style: TextButton.styleFrom(
-              splashFactory: NoSplash.splashFactory,
-              backgroundColor: widget.fillColor,
-              elevation: 0),
-          child: widget.content),
+      child: TextButton(
+        onPressed: widget.onPressed,
+        style: TextButton.styleFrom(backgroundColor: widget.fillColor),
+        child: widget.content,
+      ),
     );
   }
 }

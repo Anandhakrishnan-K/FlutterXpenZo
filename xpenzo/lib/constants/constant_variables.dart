@@ -7,6 +7,23 @@ const Color appColor = Color(0xffB9D9EB);
 const Color white = Colors.white;
 const Color black = Colors.black;
 const Color transparent = Colors.transparent;
+const Color exRed = Color(0xffffe3e0);
+//Constant Material Color
+const MaterialColor colorPrimary = MaterialColor(
+  0xffB9D9EB,
+  <int, Color>{
+    50: Color(0xFFE9F2F9),
+    100: Color(0xFFC8DDEE),
+    200: Color(0xFFA2C2E2),
+    300: Color(0xFF7BA7D6),
+    400: Color(0xFF5B92CC),
+    500: Color(0xFF3B7DBF),
+    600: Color(0xFF3475B8),
+    700: Color(0xFF2B6BAC),
+    800: Color(0xFF2361A1),
+    900: Color(0xFF174F8E),
+  },
+);
 
 //************************** Font Size *******************/
 const double fontSizeBig = 16;
@@ -75,21 +92,4 @@ DateFormat d = DateFormat('dd');
 DateFormat m = DateFormat('MMM');
 DateFormat y = DateFormat('yyyy');
 //For detailed view
-DateFormat dateWithTime = DateFormat('dd-MM-yy hh:mm');
-
-//Constant Material Color
-const MaterialColor colorPrimary = MaterialColor(
-  0xffB9D9EB,
-  <int, Color>{
-    50: Color(0xFFE9F2F9),
-    100: Color(0xFFC8DDEE),
-    200: Color(0xFFA2C2E2),
-    300: Color(0xFF7BA7D6),
-    400: Color(0xFF5B92CC),
-    500: Color(0xFF3B7DBF),
-    600: Color(0xFF3475B8),
-    700: Color(0xFF2B6BAC),
-    800: Color(0xFF2361A1),
-    900: Color(0xFF174F8E),
-  },
-);
+DateFormat dateWithTime = DateFormat('dd-MM-yy    hh:mm a ');

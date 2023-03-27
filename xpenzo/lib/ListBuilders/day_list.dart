@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:xpenso/BLoC/bloc_day_update.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
+import 'package:xpenso/BLoC/validation_bloc.dart';
 import 'package:xpenso/DataBase/data_model.dart';
 import 'package:xpenso/Utils/add_cf_sheet.dart';
 import 'package:xpenso/Utils/duration_card.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
+import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 
 //Creating Objects for the Class
 final dayBloc = DayBloc();
@@ -25,10 +27,12 @@ class DayList extends StatefulWidget {
 
 class _DayListState extends State<DayList> {
   Future pickDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        initialEntryMode: DatePickerEntryMode.calendarOnly,
-        context: context,
-        initialDate: dateSelected,
+    final DateTime? picked = await DatePicker.showSimpleDatePicker(context,
+        titleText: 'Pick a Date',
+        itemTextStyle: const TextStyle(fontSize: fontSizeBig),
+        dateFormat: 'dd-MMM-yyyy',
+        looping: true,
+        initialDate: DateTime.now(),
         firstDate: DateTime(2000),
         lastDate: DateTime(2050));
 
@@ -46,8 +50,6 @@ class _DayListState extends State<DayList> {
   @override
   void initState() {
     dayUpdateBloc.eventSink.add(DayUpdate.update);
-    dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
-    dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
     debugPrint('From Day List Init State Method | State Initiated');
     super.initState();
   }
@@ -67,7 +69,7 @@ class _DayListState extends State<DayList> {
         ),
         StreamBuilder(
           stream: dayBloc.stateStream,
-          initialData: DateTime.now(),
+          initialData: dateSelected,
           builder: (context, snapshot) {
             DateTime tmpDate = snapshot.data!;
             return DurationCard(
@@ -91,7 +93,7 @@ class _DayListState extends State<DayList> {
                   pickDate(context);
                 },
                 content:
-                    '${day.format(tmpDate)} (${weekDay.format(dateSelected).toString()})');
+                    '${day.format(tmpDate)} (${weekDay.format(tmpDate).toString()})');
           },
         ),
         const SizedBox(
@@ -112,8 +114,8 @@ class _DayListState extends State<DayList> {
                         children: [
                           const MyImageIcon(
                               color: Colors.grey,
-                              totalSize: height100 * 1.8,
-                              iconSize: height100 * 1.6,
+                              totalSize: height100 * 1.5,
+                              iconSize: height100 * 1.3,
                               path: 'assets/icons/embarrassed.png',
                               name: 'OOPS!!'),
                           const SizedBox(
@@ -145,11 +147,11 @@ class _DayListState extends State<DayList> {
                             child: Container(
                               alignment: Alignment.centerRight,
                               decoration: BoxDecoration(
-                                  color: Colors.red,
+                                  color: exRed,
                                   borderRadius:
                                       BorderRadius.circular(height10)),
                               child: const Padding(
-                                  padding: EdgeInsets.all(height40),
+                                  padding: EdgeInsets.all(height20),
                                   child: Icon(Icons.delete)),
                             ),
                           ),
@@ -213,16 +215,20 @@ class _DayListState extends State<DayList> {
 
                           // list of values to be displayed designed below
                           child: GestureDetector(
-                            onTap: () {
+                            onDoubleTap: () {
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
                                     title: Center(
                                       child: MyText(
-                                          isHeader: true,
-                                          content:
-                                              'Amount:   ${dayList[index].amount.toString()}'),
+                                        isHeader: true,
+                                        content:
+                                            'Amount:   ${dayList[index].amount.toString()}',
+                                        color: dayList[index].categoryFlag == 0
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
                                     ),
                                     content: SizedBox(
                                       height: height100,
@@ -385,7 +391,10 @@ class _DayListState extends State<DayList> {
                       content: 'Add Credit',
                     ),
                     onPressed: () {
+                      amountController.clear();
+                      notesController.clear();
                       setState(() {
+                        amountValid = true;
                         selectedIndex1 = List.filled(30, false);
                         showModalBottomSheet(
                           shape: const RoundedRectangleBorder(
@@ -397,55 +406,83 @@ class _DayListState extends State<DayList> {
                           elevation: height20,
                           context: context,
                           builder: (context) {
-                            return Padding(
-                                padding: MediaQuery.of(context).viewInsets,
-                                child: AddCredit(
-                                  iscredit: true,
-                                  list: incomeList,
-                                  submitButtonName: 'Add credit / Income',
-                                  onPressed: () async {
-                                    Ledger ledger = Ledger();
-                                    ledger.amount =
-                                        int.parse(amountController.text);
-                                    ledger.notes = notesController.text;
-                                    ledger.categoryFlag =
-                                        1; //Credit: 1 | Debit 0
-                                    ledger.categoryIndex = catIndex;
-                                    ledger.day =
-                                        d.format(dateSelected).toString();
-                                    ledger.month =
-                                        m.format(dateSelected).toString();
-                                    ledger.year =
-                                        y.format(dateSelected).toString();
-                                    ledger.createdT = DateTime.now().toString();
-                                    ledger.attachmentFlag =
-                                        0; //Attachment Flag temp set to 0
-                                    ledger.attachmentName = 'NA';
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            backgroundColor: Colors.white,
-                                            dismissDirection:
-                                                DismissDirection.endToStart,
-                                            duration:
-                                                const Duration(seconds: 1),
-                                            content: MyText(
-                                              content:
-                                                  'Credit Amount: ${ledger.amount} added successfully',
-                                              size: fontSizeSmall,
-                                            )));
-                                    var result = await service.saveData(ledger);
-                                    dayUpdateBloc.eventSink
-                                        .add(DayUpdate.update);
-                                    dayTotalCreditBloc.eventSink
-                                        .add(DayUpdate.credit);
-                                    dayTotalDebitBloc.eventSink
-                                        .add(DayUpdate.debit);
+                            return StreamBuilder(
+                                initialData: true,
+                                stream: validatorBloc.stateStream,
+                                builder: (context, snapshot) {
+                                  return Padding(
+                                      padding:
+                                          MediaQuery.of(context).viewInsets,
+                                      child: AddCredit(
+                                        iscredit: true,
+                                        list: incomeList,
+                                        submitButtonName: 'Add credit / Income',
+                                        onPressed: () async {
+                                          setState(() {
+                                            amountController.text.isEmpty
+                                                ? amountValid = false
+                                                : amountValid = true;
+                                          });
+                                          amountController.text.isEmpty
+                                              ? validatorBloc.eventSink
+                                                  .add(Validate.notOkay)
+                                              : validatorBloc.eventSink
+                                                  .add(Validate.okay);
+                                          if (amountValid == true) {
+                                            Ledger ledger = Ledger();
+                                            ledger.amount = int.parse(
+                                                amountController.text);
+                                            ledger.notes = notesController.text;
+                                            ledger.categoryFlag =
+                                                1; //Credit: 1 | Debit 0
+                                            ledger.categoryIndex = catIndex;
+                                            ledger.day = d
+                                                .format(dateSelected)
+                                                .toString();
+                                            ledger.month = m
+                                                .format(dateSelected)
+                                                .toString();
+                                            ledger.year = y
+                                                .format(dateSelected)
+                                                .toString();
+                                            ledger.createdT =
+                                                DateTime.now().toString();
+                                            ledger.attachmentFlag =
+                                                0; //Attachment Flag temp set to 0
+                                            ledger.attachmentName = 'NA';
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    dismissDirection:
+                                                        DismissDirection
+                                                            .endToStart,
+                                                    duration: const Duration(
+                                                        seconds: 1),
+                                                    content: MyText(
+                                                      content:
+                                                          'Credit Amount: ${ledger.amount} added successfully',
+                                                      size: fontSizeSmall,
+                                                    )));
+                                            var result =
+                                                await service.saveData(ledger);
+                                            dayUpdateBloc.eventSink
+                                                .add(DayUpdate.update);
+                                            dayTotalCreditBloc.eventSink
+                                                .add(DayUpdate.credit);
+                                            dayTotalDebitBloc.eventSink
+                                                .add(DayUpdate.debit);
 
-                                    debugPrint(
-                                        '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day}');
-                                  },
-                                ));
+                                            debugPrint(
+                                                '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day}');
+                                          } else {
+                                            debugPrint(
+                                                'Form Validation not sucessfull ${snapshot.data.toString()}');
+                                          }
+                                        },
+                                      ));
+                                });
                           },
                         );
                       });
@@ -461,7 +498,10 @@ class _DayListState extends State<DayList> {
                     fillColor: transparent,
                     content: const MyText(content: 'Add Debit'),
                     onPressed: () {
+                      amountController.clear();
+                      notesController.clear();
                       setState(() {
+                        amountValid = true;
                         selectedIndex1 = List.filled(30, false);
                         showModalBottomSheet(
                           shape: const RoundedRectangleBorder(
@@ -480,45 +520,60 @@ class _DayListState extends State<DayList> {
                                   list: expenseList,
                                   submitButtonName: 'Add Debit / Expense',
                                   onPressed: () async {
-                                    Ledger ledger = Ledger();
-                                    ledger.amount =
-                                        int.parse(amountController.text);
-                                    ledger.notes = notesController.text;
-                                    ledger.categoryFlag =
-                                        0; //Credit = 1 | Debit =0
-                                    ledger.categoryIndex = catIndex;
-                                    ledger.day =
-                                        d.format(dateSelected).toString();
-                                    ledger.month =
-                                        m.format(dateSelected).toString();
-                                    ledger.year =
-                                        y.format(dateSelected).toString();
-                                    ledger.createdT = DateTime.now().toString();
-                                    ledger.attachmentFlag =
-                                        0; //Attachment Flag temp set to 0
-                                    ledger.attachmentName = 'NA';
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            backgroundColor: Colors.white,
-                                            dismissDirection:
-                                                DismissDirection.endToStart,
-                                            duration:
-                                                const Duration(seconds: 1),
-                                            content: MyText(
-                                              content:
-                                                  'Debit Amount: ${ledger.amount} added successfully',
-                                              size: fontSizeSmall,
-                                            )));
-                                    var result = await service.saveData(ledger);
-                                    dayUpdateBloc.eventSink
-                                        .add(DayUpdate.update);
-                                    dayTotalCreditBloc.eventSink
-                                        .add(DayUpdate.credit);
-                                    dayTotalDebitBloc.eventSink
-                                        .add(DayUpdate.debit);
-                                    debugPrint(
-                                        '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day}');
+                                    setState(() {
+                                      amountController.text.isEmpty
+                                          ? amountValid = false
+                                          : amountValid = true;
+                                    });
+                                    amountController.text.isEmpty
+                                        ? validatorBloc.eventSink
+                                            .add(Validate.notOkay)
+                                        : validatorBloc.eventSink
+                                            .add(Validate.okay);
+
+                                    if (amountValid == true) {
+                                      Ledger ledger = Ledger();
+                                      ledger.amount =
+                                          int.parse(amountController.text);
+                                      ledger.notes = notesController.text;
+                                      ledger.categoryFlag =
+                                          0; //Credit = 1 | Debit =0
+                                      ledger.categoryIndex = catIndex;
+                                      ledger.day =
+                                          d.format(dateSelected).toString();
+                                      ledger.month =
+                                          m.format(dateSelected).toString();
+                                      ledger.year =
+                                          y.format(dateSelected).toString();
+                                      ledger.createdT =
+                                          DateTime.now().toString();
+                                      ledger.attachmentFlag =
+                                          0; //Attachment Flag temp set to 0
+                                      ledger.attachmentName = 'NA';
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              backgroundColor: Colors.white,
+                                              dismissDirection:
+                                                  DismissDirection.endToStart,
+                                              duration:
+                                                  const Duration(seconds: 1),
+                                              content: MyText(
+                                                content:
+                                                    'Debit Amount: ${ledger.amount} added successfully',
+                                                size: fontSizeSmall,
+                                              )));
+                                      var result =
+                                          await service.saveData(ledger);
+                                      dayUpdateBloc.eventSink
+                                          .add(DayUpdate.update);
+                                      dayTotalCreditBloc.eventSink
+                                          .add(DayUpdate.credit);
+                                      dayTotalDebitBloc.eventSink
+                                          .add(DayUpdate.debit);
+                                      debugPrint(
+                                          '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day}');
+                                    }
                                   },
                                 ));
                           },
