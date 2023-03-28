@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:xpenso/BLoC/bloc_day_update.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
@@ -8,6 +10,9 @@ import 'package:xpenso/Utils/duration_card.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 //Creating Objects for the Class
 final dayBloc = DayBloc();
@@ -18,6 +23,14 @@ final dayTotalDebitBloc = DayTotalDebitBloc();
 //Creating Empty List
 List<Ledger> emptyList = [];
 
+//Object for Image Picker
+int imageCount = 0;
+final picker = ImagePicker();
+
+//Image Variables
+int attachFlag = 0;
+String attachName = '';
+
 class DayList extends StatefulWidget {
   const DayList({super.key});
 
@@ -26,6 +39,54 @@ class DayList extends StatefulWidget {
 }
 
 class _DayListState extends State<DayList> {
+  File? image;
+  Future<void> putImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        attachFlag = 1;
+      });
+      final localImageFile = await saveImage(File(pickedFile.path));
+      debugPrint('Image path: ${localImageFile.path}');
+    }
+  }
+
+  Future<File> saveImage(File tmpImgae) async {
+    final appDir = await getApplicationDocumentsDirectory();
+    final imageFile = await compressImage(tmpImgae);
+    final imgPath = '${appDir.path}/${DateTime.now().toString()}.png';
+    setState(() {
+      attachName = imgPath;
+    });
+    final storedImage = await imageFile.copy(imgPath);
+    debugPrint('Image Saved to Local');
+    return storedImage;
+  }
+
+  Future<File> compressImage(File imageFile) async {
+    final result = await FlutterImageCompress.compressAndGetFile(
+      imageFile.path,
+      '${imageFile.parent.path}/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      quality: 50,
+    );
+    return result!;
+  }
+
+  Future<void> getImage(String img) async {
+    final imgPath = img;
+    if (imgPath != 'NA') {
+      debugPrint('Image Retrieved from Local $imgPath');
+      setState(() {
+        image = File(imgPath);
+      });
+    } else {
+      setState(() {
+        image = null;
+      });
+      debugPrint('No Image available for selected tile');
+    }
+  }
+
   Future pickDate(BuildContext context) async {
     final DateTime? picked = await DatePicker.showSimpleDatePicker(context,
         titleText: 'Pick a Date',
@@ -137,7 +198,7 @@ class _DayListState extends State<DayList> {
                       physics: const BouncingScrollPhysics(),
                       itemCount: dayList.length,
                       itemBuilder: (context, index) {
-                        final item = dayList[index].toString();
+                        final item = dayList[index].id.toString();
 
                         // Dismissable Widget Startes Here
                         return Dismissible(
@@ -151,7 +212,7 @@ class _DayListState extends State<DayList> {
                                   borderRadius:
                                       BorderRadius.circular(height10)),
                               child: const Padding(
-                                  padding: EdgeInsets.all(height20),
+                                  padding: EdgeInsets.only(right: height40),
                                   child: Icon(Icons.delete)),
                             ),
                           ),
@@ -167,6 +228,7 @@ class _DayListState extends State<DayList> {
                                     size: fontSizeBig,
                                   ),
                                   content: const MyText(
+                                    maxlines: 2,
                                     content:
                                         'This will be permanent action and cannot be reverted',
                                     size: fontSizeSmall,
@@ -197,25 +259,29 @@ class _DayListState extends State<DayList> {
                           key: Key(item),
                           direction: DismissDirection.endToStart,
                           onDismissed: (direction) {
-                            setState(() {
-                              dayList.removeAt(index);
-                            });
+                            service.deleteData(item);
+                            dayUpdateBloc.eventSink.add(DayUpdate.update);
+                            dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
+                            dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
 
                             // Display Snack bar when item deleted
 
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.white,
-                                dismissDirection: DismissDirection.endToStart,
-                                duration: const Duration(seconds: 1),
-                                content: MyText(
-                                    content:
-                                        'Item ${index.toString()} Delete Sucessfully',
-                                    size: fontSizeSmall)));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    backgroundColor: Colors.white,
+                                    dismissDirection:
+                                        DismissDirection.endToStart,
+                                    duration: Duration(seconds: 1),
+                                    content: MyText(
+                                        content: 'Record Deleted Sucessfully',
+                                        size: fontSizeSmall)));
                           },
 
                           // list of values to be displayed designed below
                           child: GestureDetector(
                             onDoubleTap: () {
+                              getImage(
+                                  dayList[index].attachmentName.toString());
                               showDialog(
                                 context: context,
                                 builder: (context) {
@@ -231,8 +297,8 @@ class _DayListState extends State<DayList> {
                                       ),
                                     ),
                                     content: SizedBox(
-                                      height: height100,
-                                      width: deviceWidth * 0.9,
+                                      height: height100 * 4,
+                                      width: double.infinity,
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
                                         child: Column(
@@ -242,17 +308,29 @@ class _DayListState extends State<DayList> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             MyText(
+                                                size: fontSizeSmall * 0.9,
                                                 content: dayList[index]
                                                             .categoryFlag ==
                                                         0
                                                     ? 'Category:    Debit'
                                                     : 'Category:    Credit'),
+                                            const SizedBox(
+                                              height: height10,
+                                            ),
                                             MyText(
+                                                size: fontSizeSmall * 0.9,
                                                 content:
-                                                    'Date:    ${dayList[index].day} - ${dayList[index].month}'),
+                                                    'Date:    ${dayList[index].day} - ${dayList[index].month} - ${dayList[index].year}'),
+                                            const SizedBox(
+                                              height: height10,
+                                            ),
                                             MyText(
+                                                size: fontSizeSmall * 0.9,
                                                 content:
                                                     'Created On:  ${dateWithTime.format(DateTime.parse(dayList[index].createdT.toString())).toString()}'),
+                                            const SizedBox(
+                                              height: height10,
+                                            ),
                                             MyText(
                                               maxlines: 20,
                                               content: dayList[index].notes ==
@@ -260,6 +338,37 @@ class _DayListState extends State<DayList> {
                                                   ? 'Notes:   < No Notes >'
                                                   : 'Notes:    ${dayList[index].notes}',
                                               size: fontSizeSmall * 0.9,
+                                            ),
+                                            const SizedBox(
+                                              height: height10,
+                                            ),
+                                            const MyText(
+                                              maxlines: 20,
+                                              content: 'Bill:',
+                                              size: fontSizeSmall * 0.9,
+                                            ),
+                                            const SizedBox(
+                                              height: height10,
+                                            ),
+                                            SizedBox(
+                                              height: height100 * 3,
+                                              width: deviceWidth * 0.85,
+                                              child: image != null
+                                                  ? Image.file(
+                                                      image!,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : const Center(
+                                                      child: MyImageIcon(
+                                                          color: Colors.grey,
+                                                          totalSize:
+                                                              height100 * 1.5,
+                                                          iconSize:
+                                                              height100 * 1.3,
+                                                          path:
+                                                              'assets/icons/embarrassed.png',
+                                                          name: 'No Bills!!'),
+                                                    ),
                                             ),
                                           ],
                                         ),
@@ -394,6 +503,8 @@ class _DayListState extends State<DayList> {
                       amountController.clear();
                       notesController.clear();
                       setState(() {
+                        attachFlag = 0;
+                        attachName = 'NA';
                         amountValid = true;
                         selectedIndex1 = List.filled(30, false);
                         showModalBottomSheet(
@@ -413,7 +524,13 @@ class _DayListState extends State<DayList> {
                                   return Padding(
                                       padding:
                                           MediaQuery.of(context).viewInsets,
+
+                                      //************* Add CF | Add Credit Calling here *************/
                                       child: AddCredit(
+                                        //Uplaod images
+                                        onPressedAt: () {
+                                          putImage();
+                                        },
                                         iscredit: true,
                                         list: incomeList,
                                         submitButtonName: 'Add credit / Income',
@@ -448,8 +565,11 @@ class _DayListState extends State<DayList> {
                                             ledger.createdT =
                                                 DateTime.now().toString();
                                             ledger.attachmentFlag =
-                                                0; //Attachment Flag temp set to 0
-                                            ledger.attachmentName = 'NA';
+                                                attachFlag; //Attachment Flag temp set to 0
+                                            ledger.attachmentName =
+                                                attachFlag == 1
+                                                    ? attachName
+                                                    : 'NA';
                                             Navigator.pop(context);
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
@@ -475,7 +595,7 @@ class _DayListState extends State<DayList> {
                                                 .add(DayUpdate.debit);
 
                                             debugPrint(
-                                                '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day}');
+                                                '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Image: ${ledger.attachmentName}');
                                           } else {
                                             debugPrint(
                                                 'Form Validation not sucessfull ${snapshot.data.toString()}');
@@ -496,8 +616,12 @@ class _DayListState extends State<DayList> {
                     borderRadius: BorderRadius.circular(height10)),
                 child: MyButton(
                     fillColor: transparent,
+
+                    //************* Add CF | Add Debit Calling here *************/
                     content: const MyText(content: 'Add Debit'),
                     onPressed: () {
+                      attachFlag = 0;
+                      attachName = 'NA';
                       amountController.clear();
                       notesController.clear();
                       setState(() {
@@ -516,6 +640,10 @@ class _DayListState extends State<DayList> {
                             return Padding(
                                 padding: MediaQuery.of(context).viewInsets,
                                 child: AddCredit(
+                                  //Uplaod images
+                                  onPressedAt: () {
+                                    putImage();
+                                  },
                                   iscredit: true,
                                   list: expenseList,
                                   submitButtonName: 'Add Debit / Expense',
@@ -548,8 +676,9 @@ class _DayListState extends State<DayList> {
                                       ledger.createdT =
                                           DateTime.now().toString();
                                       ledger.attachmentFlag =
-                                          0; //Attachment Flag temp set to 0
-                                      ledger.attachmentName = 'NA';
+                                          attachFlag; //Attachment Flag temp set to 0
+                                      ledger.attachmentName =
+                                          attachFlag == 1 ? attachName : 'NA';
                                       Navigator.pop(context);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(

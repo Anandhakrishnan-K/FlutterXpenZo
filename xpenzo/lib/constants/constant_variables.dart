@@ -82,7 +82,7 @@ List<Widget> incomeList = [
 //*************************** Defining Date Formats ********************/
 
 DateTime dateSelected = DateTime.now();
-DateFormat day = DateFormat('dd - MMM');
+DateFormat day = DateFormat('dd-MMM-yy');
 DateFormat month = DateFormat('MMM - yy');
 DateFormat year = DateFormat('yyyy');
 DateFormat weekDay = DateFormat('EEE');

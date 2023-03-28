@@ -114,4 +114,8 @@ class Services {
   getYearTotal(year, flag) async {
     return await repo.yearTotal('ledger_t', year, flag);
   }
+
+  deleteData(id) async {
+    return await repo.deleteFunction('ledger_t', id);
+  }
 }
