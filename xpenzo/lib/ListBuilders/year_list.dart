@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/BLoC/bloc_month.dart';
 import 'package:xpenso/BLoC/index_bloc.dart';
@@ -30,6 +31,9 @@ class _YearListState extends State<YearList> {
   bool yes = true;
   @override
   void initState() {
+    deleteCacheDir();
+
+    debugPrint('Year List Initiated | loading: $yes');
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (mounted) {
         setState(() {
@@ -44,7 +48,22 @@ class _YearListState extends State<YearList> {
 
   @override
   void dispose() {
+    yes = true;
+    debugPrint('Year List Disposed | lodaing flag set to: $yes');
     super.dispose();
+  }
+
+  Future<void> deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+    final appDir = await getApplicationSupportDirectory();
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
+
+    debugPrint('Cache Cleared');
   }
 
   Future pickDate(BuildContext context) async {
@@ -70,71 +89,72 @@ class _YearListState extends State<YearList> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Visibility(
-        visible: yes,
-        replacement: Column(
-          children: [
-            const SizedBox(
-              height: height20,
-            ),
-            StreamBuilder(
-              stream: yearBolc.stateStream,
-              initialData: DateTime.now(),
-              builder: (context, snapshot) {
-                DateTime tmpDate = snapshot.data!;
-                return DurationCard(
-                    onPressedPlus: () {
-                      yearBolc.eventSink.add(YearEvent.add);
-                      yearTotalBloc.eventSink.add(YearUpdate.getData);
-                      yearTotalListBloc.eventSink.add(YearUpdate.update);
-                    },
-                    onPressedMinus: () {
-                      yearBolc.eventSink.add(YearEvent.minus);
-                      yearTotalBloc.eventSink.add(YearUpdate.getData);
-                      yearTotalListBloc.eventSink.add(YearUpdate.update);
-                    },
-                    onPressedJump: () {
-                      yearBolc.eventSink.add(YearEvent.jump0);
-                      yearTotalBloc.eventSink.add(YearUpdate.getData);
-                      yearTotalListBloc.eventSink.add(YearUpdate.update);
-                      pickDate(context);
-                    },
-                    content: year.format(tmpDate));
-              },
-            ),
-            Expanded(
-              child: Center(
-                child: StreamBuilder(
-                  initialData: emptyMonthList,
-                  stream: yearTotalListBloc.stateStream,
-                  builder: (context, snapshot) {
-                    List<MapEntry<DateTime, MapEntry<int, int>>> tmpData =
-                        snapshot.data!;
-                    if (tmpData.isEmpty) {
-                      return SizedBox(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const MyImageIcon(
-                                  color: Colors.grey,
-                                  totalSize: height100 * 1.5,
-                                  iconSize: height100 * 1.3,
-                                  path: 'assets/icons/embarrassed.png',
-                                  name: 'OOPS!!'),
-                              const SizedBox(
-                                height: height20,
-                              ),
-                              MyText(
-                                  color: Colors.grey,
-                                  content:
-                                      'No Data Available for ${year.format(dateSelected).toString()}'),
-                            ],
-                          ),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: height20,
+          ),
+          StreamBuilder(
+            stream: yearBolc.stateStream,
+            initialData: DateTime.now(),
+            builder: (context, snapshot) {
+              DateTime tmpDate = snapshot.data!;
+              return DurationCard(
+                  onPressedPlus: () {
+                    yearBolc.eventSink.add(YearEvent.add);
+                    yearTotalBloc.eventSink.add(YearUpdate.getData);
+                    yearTotalListBloc.eventSink.add(YearUpdate.update);
+                  },
+                  onPressedMinus: () {
+                    yearBolc.eventSink.add(YearEvent.minus);
+                    yearTotalBloc.eventSink.add(YearUpdate.getData);
+                    yearTotalListBloc.eventSink.add(YearUpdate.update);
+                  },
+                  onPressedJump: () {
+                    yearBolc.eventSink.add(YearEvent.jump0);
+                    yearTotalBloc.eventSink.add(YearUpdate.getData);
+                    yearTotalListBloc.eventSink.add(YearUpdate.update);
+                    pickDate(context);
+                  },
+                  content: year.format(tmpDate));
+            },
+          ),
+          Expanded(
+            child: Center(
+              child: StreamBuilder(
+                initialData: emptyMonthList,
+                stream: yearTotalListBloc.stateStream,
+                builder: (context, snapshot) {
+                  List<MapEntry<DateTime, MapEntry<int, int>>> tmpData =
+                      snapshot.data!;
+                  if (tmpData.isEmpty &&
+                      snapshot.connectionState != ConnectionState.waiting) {
+                    return SizedBox(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const MyImageIcon(
+                                color: Colors.grey,
+                                totalSize: height100 * 1.5,
+                                iconSize: height100 * 1.3,
+                                path: 'assets/icons/embarrassed.png',
+                                name: 'OOPS!!'),
+                            const SizedBox(
+                              height: height20,
+                            ),
+                            MyText(
+                                color: Colors.grey,
+                                content:
+                                    'No Data Available for ${year.format(dateSelected).toString()}'),
+                          ],
                         ),
-                      );
-                    } else {
-                      return ListView.builder(
+                      ),
+                    );
+                  } else {
+                    return Visibility(
+                      visible: yes,
+                      replacement: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemCount: tmpData.length,
                         itemBuilder: (context, index) {
@@ -274,16 +294,16 @@ class _YearListState extends State<YearList> {
                             ),
                           );
                         },
-                      );
-                    }
-                  },
-                ),
+                      ),
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                          color: appColor, size: height30),
+                    );
+                  }
+                },
               ),
             ),
-          ],
-        ),
-        child: LoadingAnimationWidget.staggeredDotsWave(
-            color: appColor, size: height30),
+          ),
+        ],
       ),
     );
   }

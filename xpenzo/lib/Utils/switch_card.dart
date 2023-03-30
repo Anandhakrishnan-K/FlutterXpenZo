@@ -100,6 +100,8 @@ class _SwitchCardState extends State<SwitchCard> {
                 listPageController.animateToPage(2,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.linear);
+                // cardPageController.jumpToPage(2);
+                // listPageController.jumpToPage(2);
                 indexBloc.eventSink.add(IndexUpdate.year);
               },
               fillColor: transparent,

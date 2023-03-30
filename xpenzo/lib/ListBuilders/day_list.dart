@@ -1,5 +1,7 @@
-import 'dart:io';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+import 'package:xpenso/BLoC/bloc_attach.dart';
 import 'package:flutter/material.dart';
 import 'package:xpenso/BLoC/bloc_day_update.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
@@ -12,7 +14,7 @@ import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:xpenso/Utils/full_screen_widget.dart';
 
 //Creating Objects for the Class
 final dayBloc = DayBloc();
@@ -24,8 +26,11 @@ final dayTotalDebitBloc = DayTotalDebitBloc();
 List<Ledger> emptyList = [];
 
 //Object for Image Picker
-int imageCount = 0;
 final picker = ImagePicker();
+// ignore: avoid_init_to_null
+var pickedFile = null;
+// ignore: avoid_init_to_null
+var storedImage = null;
 
 //Image Variables
 int attachFlag = 0;
@@ -41,35 +46,24 @@ class DayList extends StatefulWidget {
 class _DayListState extends State<DayList> {
   File? image;
   Future<void> putImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    pickedFile =
+        await picker.pickImage(source: ImageSource.gallery, imageQuality: 20);
     if (pickedFile != null) {
       setState(() {
         attachFlag = 1;
       });
-      final localImageFile = await saveImage(File(pickedFile.path));
-      debugPrint('Image path: ${localImageFile.path}');
     }
   }
 
   Future<File> saveImage(File tmpImgae) async {
     final appDir = await getApplicationDocumentsDirectory();
-    final imageFile = await compressImage(tmpImgae);
     final imgPath = '${appDir.path}/${DateTime.now().toString()}.png';
     setState(() {
       attachName = imgPath;
     });
-    final storedImage = await imageFile.copy(imgPath);
+    final storedImage = await tmpImgae.copy(imgPath);
     debugPrint('Image Saved to Local');
     return storedImage;
-  }
-
-  Future<File> compressImage(File imageFile) async {
-    final result = await FlutterImageCompress.compressAndGetFile(
-      imageFile.path,
-      '${imageFile.parent.path}/${DateTime.now().millisecondsSinceEpoch}.jpg',
-      quality: 50,
-    );
-    return result!;
   }
 
   Future<void> getImage(String img) async {
@@ -85,6 +79,32 @@ class _DayListState extends State<DayList> {
       });
       debugPrint('No Image available for selected tile');
     }
+  }
+
+  Future<void> deleteImage(String img) async {
+    try {
+      final imgPath = img;
+      if (imgPath.isNotEmpty) {
+        await File(imgPath).delete();
+        debugPrint('Image Deleted Sucessfully $imgPath');
+      } else {
+        debugPrint('Nothing to delete');
+      }
+    } catch (e) {
+      debugPrint('Image Not Prrsent ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+    final appDir = await getApplicationSupportDirectory();
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
+    debugPrint('Cache Cleared');
   }
 
   Future pickDate(BuildContext context) async {
@@ -110,6 +130,7 @@ class _DayListState extends State<DayList> {
 
   @override
   void initState() {
+    deleteCacheDir();
     dayUpdateBloc.eventSink.add(DayUpdate.update);
     debugPrint('From Day List Init State Method | State Initiated');
     super.initState();
@@ -167,7 +188,8 @@ class _DayListState extends State<DayList> {
               initialData: emptyList,
               builder: (context, snapshot) {
                 List<Ledger> dayList = snapshot.data!;
-                if (dayList.isEmpty) {
+                if (dayList.isEmpty &&
+                    snapshot.connectionState != ConnectionState.waiting) {
                   return SizedBox(
                     child: Center(
                       child: Column(
@@ -259,12 +281,18 @@ class _DayListState extends State<DayList> {
                           key: Key(item),
                           direction: DismissDirection.endToStart,
                           onDismissed: (direction) {
+                            if (dayList[index].attachmentFlag != 0) {
+                              deleteImage(
+                                  dayList[index].attachmentName.toString());
+                            }
                             service.deleteData(item);
                             dayUpdateBloc.eventSink.add(DayUpdate.update);
                             dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
                             dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
 
                             // Display Snack bar when item deleted
+
+                            debugPrint('Deteted Sucessfully');
 
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -297,7 +325,9 @@ class _DayListState extends State<DayList> {
                                       ),
                                     ),
                                     content: SizedBox(
-                                      height: height100 * 4,
+                                      height: image != null
+                                          ? height100 * 4
+                                          : height100 * 1.5,
                                       width: double.infinity,
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
@@ -342,33 +372,34 @@ class _DayListState extends State<DayList> {
                                             const SizedBox(
                                               height: height10,
                                             ),
-                                            const MyText(
-                                              maxlines: 20,
-                                              content: 'Bill:',
-                                              size: fontSizeSmall * 0.9,
+                                            Visibility(
+                                              visible:
+                                                  image != null ? true : false,
+                                              child: const MyText(
+                                                maxlines: 20,
+                                                content: 'Bill:',
+                                                size: fontSizeSmall * 0.9,
+                                              ),
                                             ),
                                             const SizedBox(
                                               height: height10,
                                             ),
-                                            SizedBox(
-                                              height: height100 * 3,
-                                              width: deviceWidth * 0.85,
-                                              child: image != null
-                                                  ? Image.file(
-                                                      image!,
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : const Center(
-                                                      child: MyImageIcon(
-                                                          color: Colors.grey,
-                                                          totalSize:
-                                                              height100 * 1.5,
-                                                          iconSize:
-                                                              height100 * 1.3,
-                                                          path:
-                                                              'assets/icons/embarrassed.png',
-                                                          name: 'No Bills!!'),
-                                                    ),
+                                            Visibility(
+                                              visible:
+                                                  image != null ? true : false,
+                                              child: SizedBox(
+                                                width: deviceWidth * 0.85,
+                                                child: image != null
+                                                    ? InstaImageViewer(
+                                                        disableSwipeToDismiss:
+                                                            true,
+                                                        child: Image.file(
+                                                          image!,
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      )
+                                                    : null,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -438,6 +469,21 @@ class _DayListState extends State<DayList> {
                                                       ? Colors.red
                                                       : Colors.green,
                                                   size: fontSizeBig,
+                                                ),
+                                                const SizedBox(
+                                                  width: deviceWidth / 16,
+                                                ),
+                                                Visibility(
+                                                  visible: dayList[index]
+                                                              .attachmentFlag ==
+                                                          1
+                                                      ? true
+                                                      : false,
+                                                  child: const Icon(
+                                                    Icons.attach_file_outlined,
+                                                    color: black,
+                                                    size: fontSizeBig,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -527,14 +573,35 @@ class _DayListState extends State<DayList> {
 
                                       //************* Add CF | Add Credit Calling here *************/
                                       child: AddCredit(
+                                        atFlag: attachFlag,
                                         //Uplaod images
                                         onPressedAt: () {
-                                          putImage();
+                                          //putImage();
+                                          attachmentBloc.eventSink
+                                              .add(Attachment.add);
+                                        },
+                                        onPressedRm: () {
+                                          attachmentBloc.eventSink
+                                              .add(Attachment.remove);
                                         },
                                         iscredit: true,
                                         list: incomeList,
                                         submitButtonName: 'Add credit / Income',
                                         onPressed: () async {
+                                          // ignore: prefer_typing_uninitialized_variables
+                                          var localImageFile;
+                                          attachFlag == 1
+                                              ? {
+                                                  localImageFile =
+                                                      await saveImage(File(
+                                                          pickedFile.path)),
+                                                  debugPrint(
+                                                      'Image path: ${localImageFile.path}'),
+                                                }
+                                              : {
+                                                  debugPrint(
+                                                      'No Bills (Images) to be uploaded')
+                                                };
                                           setState(() {
                                             amountController.text.isEmpty
                                                 ? amountValid = false
@@ -564,8 +631,7 @@ class _DayListState extends State<DayList> {
                                                 .toString();
                                             ledger.createdT =
                                                 DateTime.now().toString();
-                                            ledger.attachmentFlag =
-                                                attachFlag; //Attachment Flag temp set to 0
+                                            ledger.attachmentFlag = attachFlag;
                                             ledger.attachmentName =
                                                 attachFlag == 1
                                                     ? attachName
@@ -640,14 +706,34 @@ class _DayListState extends State<DayList> {
                             return Padding(
                                 padding: MediaQuery.of(context).viewInsets,
                                 child: AddCredit(
+                                  atFlag: attachFlag,
                                   //Uplaod images
                                   onPressedAt: () {
-                                    putImage();
+                                    //putImage();
+                                    attachmentBloc.eventSink
+                                        .add(Attachment.add);
+                                  },
+                                  onPressedRm: () {
+                                    attachmentBloc.eventSink
+                                        .add(Attachment.remove);
                                   },
                                   iscredit: true,
                                   list: expenseList,
                                   submitButtonName: 'Add Debit / Expense',
                                   onPressed: () async {
+                                    // ignore: prefer_typing_uninitialized_variables
+                                    var localImageFile;
+                                    attachFlag == 1
+                                        ? {
+                                            localImageFile = await saveImage(
+                                                File(pickedFile.path)),
+                                            debugPrint(
+                                                'Image path: ${localImageFile.path}'),
+                                          }
+                                        : {
+                                            debugPrint(
+                                                'No Bills (Images) to be uploaded')
+                                          };
                                     setState(() {
                                       amountController.text.isEmpty
                                           ? amountValid = false
@@ -701,7 +787,7 @@ class _DayListState extends State<DayList> {
                                       dayTotalDebitBloc.eventSink
                                           .add(DayUpdate.debit);
                                       debugPrint(
-                                          '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day}');
+                                          '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
                                     }
                                   },
                                 ));

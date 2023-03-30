@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:xpenso/DataBase/db_connnection.dart';
 import 'package:xpenso/ListBuilders/day_list.dart';
 import 'package:xpenso/ListBuilders/month_list.dart';
@@ -42,6 +43,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<void> deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+    final appDir = await getApplicationSupportDirectory();
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
+    debugPrint('Cache Cleared');
+  }
+
+  @override
+  void initState() {
+    deleteCacheDir();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
