@@ -88,13 +88,15 @@ class MyImageIcon extends StatelessWidget {
   final double totalSize;
   final double iconSize;
   final Color color;
+  final bool nameVis;
   const MyImageIcon(
       {super.key,
       required this.path,
-      required this.name,
+      this.name = '',
       this.totalSize = 65,
       this.iconSize = 35,
-      this.color = Colors.black});
+      this.color = Colors.black,
+      this.nameVis = true});
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +112,13 @@ class MyImageIcon extends StatelessWidget {
           const SizedBox(
             height: height10 / 2,
           ),
-          MyText(
-            content: name,
-            size: height10,
-            color: color,
+          Visibility(
+            visible: nameVis,
+            child: MyText(
+              content: name,
+              size: height10,
+              color: color,
+            ),
           )
         ],
       ),

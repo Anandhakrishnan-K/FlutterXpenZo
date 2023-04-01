@@ -144,11 +144,12 @@ class _MonthListState extends State<MonthList> {
                     return Visibility(
                       visible: yes,
                       replacement: ListView.builder(
+                        controller: mainPageDrawer,
                         physics: const BouncingScrollPhysics(),
                         itemCount: tmpData.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onDoubleTap: () {
+                            onTap: () {
                               setState(() {
                                 dateSelected = DateTime.parse(
                                     tmpData[index].key.toString());

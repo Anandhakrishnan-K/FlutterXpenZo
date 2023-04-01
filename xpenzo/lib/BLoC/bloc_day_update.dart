@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:xpenso/DataBase/data_model.dart';
-import 'package:xpenso/DataBase/db_connnection.dart';
 import 'package:xpenso/constants/constant_variables.dart';
+import 'package:xpenso/main.dart';
 
 enum DayUpdate { update, credit, debit }
 
 final List<Ledger> tmpData = [];
 int totalDayCredit = 0;
 int totalDayDebit = 0;
-final service = Services();
 
 //*************************** Day List BLoC ******************************/
 class DayUpdateBloc {

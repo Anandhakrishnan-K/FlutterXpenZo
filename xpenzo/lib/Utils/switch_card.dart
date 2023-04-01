@@ -38,6 +38,7 @@ class _SwitchCardState extends State<SwitchCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             MyButton(
+              width: deviceWidth * 0.15,
               content: MyText(
                 content: 'Day',
                 size: temp == 0 ? fontSizeBig * 1.15 : fontSizeBig,
@@ -84,6 +85,7 @@ class _SwitchCardState extends State<SwitchCard> {
               fillColor: transparent,
             ),
             MyButton(
+              width: deviceWidth * 0.16,
               content: MyText(
                 content: 'Year',
                 size: temp == 2 ? fontSizeBig * 1.15 : fontSizeBig,
@@ -106,6 +108,9 @@ class _SwitchCardState extends State<SwitchCard> {
               },
               fillColor: transparent,
             ),
+            const SizedBox(
+              width: deviceWidth * 0.05,
+            )
           ],
         );
       },

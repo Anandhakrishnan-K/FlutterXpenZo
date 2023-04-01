@@ -4,14 +4,23 @@ import 'package:xpenso/DataBase/db_connnection.dart';
 import 'package:xpenso/ListBuilders/day_list.dart';
 import 'package:xpenso/ListBuilders/month_list.dart';
 import 'package:xpenso/ListBuilders/year_list.dart';
+import 'package:xpenso/Pages/main_home_page.dart';
+import 'package:xpenso/Utils/drawer_widget.dart';
 import 'package:xpenso/Utils/switch_card.dart';
 import 'Utils/expense_card.dart';
 import 'constants/constant_variables.dart';
+
+//double back delay
+// var dTime;
 
 //Main Page Controllers
 
 PageController cardPageController = PageController();
 PageController listPageController = PageController();
+
+//Scroll contollers
+ScrollController drawerScroll = ScrollController();
+ScrollController mainPageDrawer = ScrollController();
 
 //Main Page Controller Variables
 int durationIndex = 0;
@@ -31,7 +40,7 @@ void main() {
         splashFactory: NoSplash.splashFactory,
         focusColor: transparent,
         highlightColor: transparent),
-    home: const HomePage(),
+    home: const MainHomePage(),
   ));
 }
 
@@ -57,8 +66,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    debugPrint('Home Page Initstate Called | HomePage Initiated');
     deleteCacheDir();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    debugPrint('Home Page Dispose Called | HomePage disposed');
+    super.dispose();
   }
 
   @override
@@ -69,11 +85,27 @@ class _HomePageState extends State<HomePage> {
 //**************************** App Bar ****************************/
 
       appBar: AppBar(
-          centerTitle: true,
-          foregroundColor: black,
-          backgroundColor: appColor,
-          elevation: 0,
-          title: const SwitchCard()),
+        centerTitle: true,
+        foregroundColor: black,
+        backgroundColor: appColor,
+        elevation: 0,
+        title: const SwitchCard(),
+        // actions: [
+        //   Container(
+        //     padding: const EdgeInsets.only(right: deviceWidth * 0.05),
+        //     child: IconButton(
+        //         onPressed: () {
+        //           Navigator.pushAndRemoveUntil(
+        //               context,
+        //               MaterialPageRoute(
+        //                 builder: (context) => const MainHomePage(),
+        //               ),
+        //               (route) => false);
+        //         },
+        //         icon: const Icon(Icons.home)),
+        //   ),
+        // ],
+      ),
 
 //*********************************  Body  ****************************/
 
@@ -114,7 +146,24 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      drawer: const Drawer(),
+      //***************************** Drawer Starts Here ******************************/
+      drawer: const DrawerWidget(),
+      floatingActionButton: IconButton(
+        onPressed: () {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainHomePage(),
+              ),
+              (route) => false);
+        },
+        icon: const Icon(
+          Icons.home,
+          size: height30,
+        ),
+        color: appColor,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
