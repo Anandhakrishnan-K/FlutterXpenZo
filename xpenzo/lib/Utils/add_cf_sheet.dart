@@ -178,7 +178,7 @@ class _AddCreditState extends State<AddCredit> {
             //******************************* Category List *******************************/
             Container(
                 padding: const EdgeInsets.symmetric(horizontal: height30),
-                height: height75,
+                height: height100,
                 width: deviceWidth,
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),

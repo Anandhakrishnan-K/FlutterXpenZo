@@ -31,6 +31,7 @@ const double fontSizeSmall = 14;
 
 //*********************** Dimensions *********************/
 const double deviceWidth = 390;
+const double deviceHeight = 800;
 const double mainTabHeight = 125;
 const double durationCardHeight = 50;
 const double bottomDrawerHeight = 500;
@@ -48,35 +49,36 @@ const double height100 = 100;
 
 int catIndex = 0;
 List<Widget> expenseList = [
-  const MyImageIcon(path: 'assets/icons/plus.png', name: 'Misc'),
+  const MyImageIcon(path: 'assets/icons/misc.png', name: 'Misc'),
   const MyImageIcon(path: 'assets/icons/bill.png', name: 'Bills'),
-  const MyImageIcon(path: 'assets/icons/nachos.png', name: 'Snacks'),
-  const MyImageIcon(path: 'assets/icons/vegies.png', name: 'Vegies'),
+  const MyImageIcon(path: 'assets/icons/snacks.png', name: 'Snacks'),
+  const MyImageIcon(path: 'assets/icons/veggies.png', name: 'Veggies'),
   const MyImageIcon(path: 'assets/icons/food.png', name: 'Groceries'),
-  const MyImageIcon(path: 'assets/icons/animal.png', name: 'Pets'),
-  const MyImageIcon(path: 'assets/icons/faucet.png', name: 'Mobile Bill'),
+  const MyImageIcon(path: 'assets/icons/dog.png', name: 'Pets'),
+  const MyImageIcon(path: 'assets/icons/mobile.png', name: 'Mobile Bill'),
   const MyImageIcon(path: 'assets/icons/electricity.png', name: 'Electricity'),
   const MyImageIcon(path: 'assets/icons/fuel.png', name: 'Fuel'),
   const MyImageIcon(path: 'assets/icons/gas.png', name: 'Gas'),
   const MyImageIcon(path: 'assets/icons/internet.png', name: 'WiFi Bill'),
   const MyImageIcon(path: 'assets/icons/haircut.png', name: 'Saloon'),
-  const MyImageIcon(path: 'assets/icons/investment.png', name: 'Savings'),
+  const MyImageIcon(path: 'assets/icons/savings.png', name: 'Savings'),
   const MyImageIcon(path: 'assets/icons/online-shop.png', name: 'Online'),
   const MyImageIcon(path: 'assets/icons/purchase.png', name: 'Purchase'),
   const MyImageIcon(path: 'assets/icons/service.png', name: 'Vehicle'),
   const MyImageIcon(path: 'assets/icons/stationery.png', name: 'Stationery'),
   const MyImageIcon(path: 'assets/icons/subs.png', name: 'Subscription'),
-  const MyImageIcon(path: 'assets/icons/wardrobe.png', name: 'Cloths'),
+  const MyImageIcon(path: 'assets/icons/clothes.png', name: 'Clothes'),
   const MyImageIcon(path: 'assets/icons/restaurant.png', name: 'Restaurant'),
   const MyImageIcon(path: 'assets/icons/cinema.png', name: 'Movie'),
-  const MyImageIcon(path: 'assets/icons/bus.png', name: 'Travel'),
+  const MyImageIcon(path: 'assets/icons/train.png', name: 'Travel'),
 ];
 
 List<Widget> incomeList = [
-  const MyImageIcon(path: 'assets/icons/plus.png', name: 'Misc'),
+  const MyImageIcon(path: 'assets/icons/misc.png', name: 'Misc'),
   const MyImageIcon(path: 'assets/icons/salary.png', name: 'Salary'),
   const MyImageIcon(path: 'assets/icons/returns.png', name: 'Returns'),
-  const MyImageIcon(path: 'assets/icons/bonus.png', name: 'bonus'),
+  const MyImageIcon(path: 'assets/icons/bonus.png', name: 'Bonus'),
+  const MyImageIcon(path: 'assets/icons/reimbursh.png', name: 'Reimbursh'),
 ];
 
 //*************************** Defining Date Formats ********************/

@@ -3,14 +3,14 @@ import 'package:xpenso/Pages/main_home_page.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 
-class ContactPage extends StatefulWidget {
-  const ContactPage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<ContactPage> createState() => _ContactPageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ContactPageState extends State<ContactPage> {
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +22,7 @@ class _ContactPageState extends State<ContactPage> {
         child: MyButton(
             fillColor: appColor,
             width: deviceWidth * 0.5,
-            content: const MyText(content: 'Contact Us'),
+            content: const MyText(content: 'User Profile Page'),
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                   context,

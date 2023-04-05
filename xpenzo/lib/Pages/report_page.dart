@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xpenso/Pages/main_home_page.dart';
-import 'package:xpenso/Utils/drawer_widget.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 
@@ -33,7 +32,6 @@ class _ReportPageState extends State<ReportPage> {
                   (route) => false);
             }),
       ),
-      drawer: const DrawerWidget(),
     );
   }
 }

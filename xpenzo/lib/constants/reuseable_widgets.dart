@@ -44,6 +44,7 @@ class MyButton extends StatefulWidget {
   final double height;
   final double width;
   final Color textcolor;
+  final Color borderColor;
   final Color fillColor;
   final double rad;
 
@@ -57,7 +58,8 @@ class MyButton extends StatefulWidget {
       this.textcolor = Colors.black,
       this.fillColor = Colors.white,
       this.rad = 5,
-      required this.onPressed});
+      required this.onPressed,
+      this.borderColor = Colors.transparent});
 
   @override
   State<MyButton> createState() => _MyButtonState();
@@ -69,8 +71,10 @@ class _MyButtonState extends State<MyButton> {
     return Container(
       height: widget.height,
       width: widget.width,
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(widget.rad)),
+      decoration: BoxDecoration(
+          border: Border.all(color: widget.borderColor),
+          color: widget.fillColor,
+          borderRadius: BorderRadius.circular(widget.rad)),
       child: TextButton(
         onPressed: widget.onPressed,
         style: TextButton.styleFrom(backgroundColor: widget.fillColor),
@@ -93,8 +97,8 @@ class MyImageIcon extends StatelessWidget {
       {super.key,
       required this.path,
       this.name = '',
-      this.totalSize = 65,
-      this.iconSize = 35,
+      this.totalSize = 75,
+      this.iconSize = 50,
       this.color = Colors.black,
       this.nameVis = true});
 
@@ -104,10 +108,10 @@ class MyImageIcon extends StatelessWidget {
       height: totalSize,
       child: Column(
         children: [
-          ImageIcon(
-            size: iconSize,
-            AssetImage(path),
-            color: color,
+          Image.asset(
+            path,
+            width: iconSize,
+            height: iconSize,
           ),
           const SizedBox(
             height: height10 / 2,
@@ -117,7 +121,6 @@ class MyImageIcon extends StatelessWidget {
             child: MyText(
               content: name,
               size: height10,
-              color: color,
             ),
           )
         ],

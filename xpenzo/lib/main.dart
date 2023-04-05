@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/DataBase/db_connnection.dart';
 import 'package:xpenso/ListBuilders/day_list.dart';
 import 'package:xpenso/ListBuilders/month_list.dart';
 import 'package:xpenso/ListBuilders/year_list.dart';
 import 'package:xpenso/Pages/main_home_page.dart';
-import 'package:xpenso/Utils/drawer_widget.dart';
 import 'package:xpenso/Utils/switch_card.dart';
 import 'Utils/expense_card.dart';
 import 'constants/constant_variables.dart';
@@ -32,6 +33,9 @@ final service = Services();
 //************************ Main Page Starts Here ************************/
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: transparent,
+  ));
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
@@ -146,24 +150,27 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      //***************************** Drawer Starts Here ******************************/
-      drawer: const DrawerWidget(),
-      floatingActionButton: IconButton(
-        onPressed: () {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MainHomePage(),
-              ),
-              (route) => false);
-        },
-        icon: const Icon(
-          Icons.home,
-          size: height30,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(height20),
+        child: FloatingActionButton(
+          elevation: 10,
+          backgroundColor: appColor,
+          onPressed: () {
+            dayBloc.eventSink.add(DayEvent.jump0);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MainHomePage(),
+                ),
+                (route) => false);
+          },
+          child: Image.asset(
+            'assets/icons/back.png',
+            scale: 20,
+          ),
         ),
-        color: appColor,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
     );
   }
 }

@@ -343,3 +343,123 @@ class _ExpenseCardYearState extends State<ExpenseCardYear> {
     );
   }
 }
+
+class ExpensecardDayMainPage extends StatefulWidget {
+  const ExpensecardDayMainPage({super.key});
+
+  @override
+  State<ExpensecardDayMainPage> createState() => _ExpensecardDayMainPageState();
+}
+
+class _ExpensecardDayMainPageState extends State<ExpensecardDayMainPage> {
+  @override
+  void initState() {
+    dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
+    dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsetsDirectional.all(height20),
+      height: mainTabHeight,
+      child: Container(
+        decoration: const BoxDecoration(
+            color: white,
+            borderRadius: BorderRadius.all(Radius.circular(height20))),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(height10)),
+                    border: Border.all(color: Colors.grey.shade300)),
+                width: deviceWidth * 0.9 / 2.1,
+                child: SizedBox(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.currency_rupee,
+                          size: fontSizeBig,
+                          color: Colors.green,
+                        ),
+                        StreamBuilder(
+                          initialData: 0,
+                          stream: dayTotalCreditBloc.stateStream,
+                          builder: (context, snapshot) {
+                            return MyText(
+                              content: snapshot.data!.toString(),
+                              size: fontSizeBig,
+                              color: Colors.green,
+                              isHeader: true,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: height10,
+                    ),
+                    const MyText(
+                      content: 'Total Income',
+                      size: fontSizeSmall * 0.9,
+                    )
+                  ],
+                )),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(height10)),
+                    border: Border.all(color: Colors.grey.shade300)),
+                width: deviceWidth * 0.9 / 2.1,
+                child: SizedBox(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.currency_rupee,
+                          size: fontSizeBig,
+                          color: Colors.red,
+                        ),
+                        StreamBuilder(
+                          initialData: 0,
+                          stream: dayTotalDebitBloc.stateStream,
+                          builder: (context, snapshot) {
+                            return MyText(
+                              content: snapshot.data!.toString(),
+                              size: fontSizeBig,
+                              color: Colors.red,
+                              isHeader: true,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: height10,
+                    ),
+                    const MyText(
+                      content: 'Total Expense',
+                      size: fontSizeSmall * 0.9,
+                    )
+                  ],
+                )),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
