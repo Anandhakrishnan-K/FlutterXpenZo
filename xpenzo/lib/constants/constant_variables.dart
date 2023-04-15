@@ -73,12 +73,44 @@ List<Widget> expenseList = [
   const MyImageIcon(path: 'assets/icons/train.png', name: 'Travel'),
 ];
 
+List<String> expenseNameList = [
+  'Misc',
+  'Bills',
+  'Snacks',
+  'Veggies',
+  'Pets',
+  'Mobile Bill',
+  'Electricity',
+  'Fuel',
+  'Gas',
+  'Wifi Bill',
+  'Saloon',
+  'Savings',
+  'Online',
+  'Purchase',
+  'Vehicle',
+  'Stationery',
+  'Subscription',
+  'Clothes',
+  'Restaurant',
+  'Movie',
+  'Travel'
+];
+
 List<Widget> incomeList = [
   const MyImageIcon(path: 'assets/icons/misc.png', name: 'Misc'),
   const MyImageIcon(path: 'assets/icons/salary.png', name: 'Salary'),
   const MyImageIcon(path: 'assets/icons/returns.png', name: 'Returns'),
   const MyImageIcon(path: 'assets/icons/bonus.png', name: 'Bonus'),
   const MyImageIcon(path: 'assets/icons/reimbursh.png', name: 'Reimbursh'),
+];
+
+List<String> incomeNameList = [
+  'Misc',
+  'Salary',
+  'Returns',
+  'Bonus',
+  'Reimbursh'
 ];
 
 //*************************** Defining Date Formats ********************/

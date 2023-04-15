@@ -1,9 +1,10 @@
 class Ledger {
   int? id;
-  int? amount;
+  double? amount;
   String? notes;
   int? categoryIndex;
   int? categoryFlag;
+  String? category;
   String? day;
   String? month;
   String? year;
@@ -18,6 +19,7 @@ class Ledger {
     mapping['notes'] = notes;
     mapping['categoryIndex'] = categoryIndex!;
     mapping['categoryFlag'] = categoryFlag!;
+    mapping['category'] = category;
     mapping['day'] = day!;
     mapping['month'] = month!;
     mapping['year'] = year!;

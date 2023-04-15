@@ -16,7 +16,7 @@ class DBConnections {
 
   Future createDB(Database dbCon, int version) async {
     String sql =
-        'create table ledger_t (id INTEGER PRIMARY KEY, amount INTEGER, notes TEXT, categoryIndex INTEGER, categoryFlag INTEGER, day TEXT,month TEXT,year TEXT,createdT TEXT,attachmentFlag INTEGER,attachmentName TEXT)';
+        'create table ledger_t (id INTEGER PRIMARY KEY, amount REAL, notes TEXT, categoryIndex INTEGER, categoryFlag INTEGER, category TEXT, day TEXT,month TEXT,year TEXT,createdT TEXT,attachmentFlag INTEGER,attachmentName TEXT)';
     await dbCon.execute(sql);
   }
 }
@@ -83,6 +83,27 @@ class Repository {
     var connection = await database;
     return await connection?.rawDelete('Delete from $table where id = $id');
   }
+
+//Charts Function
+  getMonthChartData(table, mon, year, flag) async {
+    var connection = await database;
+    return await connection?.rawQuery(
+        'Select sum(amount) as sum ,category from $table where month = \'${mon.toString()}\' and year = \'${year.toString()}\' and categoryFlag =\'${flag.toString()}\' group by category');
+  }
+
+  getYearChartData(table, year, flag) async {
+    var connection = await database;
+    return await connection?.rawQuery(
+        'Select sum(amount) as sum ,category from $table where  year = \'${year.toString()}\' and categoryFlag =\'${flag.toString()}\' group by category');
+  }
+
+  //Balance Available
+
+  getBalance(table, flag) async {
+    var connection = await database;
+    return await connection?.rawQuery(
+        'select sum(amount) as sum from $table where categoryFlag =\'${flag.toString()}\'');
+  }
 }
 
 //************************ Creating Services ************************/
@@ -117,5 +138,19 @@ class Services {
 
   deleteData(id) async {
     return await repo.deleteFunction('ledger_t', id);
+  }
+//Total Balance
+
+  getBalance(flag) async {
+    return await repo.getBalance('ledger_t', flag);
+  }
+
+//************************** For Charts ***********************/
+  getMonthChartData(mon, year, flag) async {
+    return await repo.getMonthChartData('ledger_t', mon, year, flag);
+  }
+
+  getYearChartData(year, flag) async {
+    return await repo.getYearChartData('ledger_t', year, flag);
   }
 }

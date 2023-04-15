@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/main.dart';
 
-enum YearUpdate { update, getData }
+enum YearUpdate {
+  update,
+  getData,
+}
 
 class YearUpadteBloc {
   final yearStateStreamController = StreamController<
-      List<MapEntry<DateTime, MapEntry<int, int>>>>.broadcast();
-  StreamSink<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateSink =>
-      yearStateStreamController.sink;
-  Stream<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateStream =>
+      List<MapEntry<DateTime, MapEntry<double, double>>>>.broadcast();
+  StreamSink<List<MapEntry<DateTime, MapEntry<double, double>>>>
+      get stateSink => yearStateStreamController.sink;
+  Stream<List<MapEntry<DateTime, MapEntry<double, double>>>> get stateStream =>
       yearStateStreamController.stream;
 
   final yearEventStreamController = StreamController<YearUpdate>();
@@ -19,11 +22,11 @@ class YearUpadteBloc {
   Stream<YearUpdate> get eventStream => yearEventStreamController.stream;
 
   YearUpadteBloc() {
-    int tmpCredit;
-    int tmpDebit;
+    double tmpCredit;
+    double tmpDebit;
     eventStream.listen((event) async {
       DateTime date = dateSelected;
-      List<MapEntry<DateTime, MapEntry<int, int>>> mappedYearList = [];
+      List<MapEntry<DateTime, MapEntry<double, double>>> mappedYearList = [];
       List<DateTime> tmpDateList = [];
       for (int i = 1; i <= 12; i++) {
         tmpDateList.add(DateTime(date.year, i, 1));
@@ -38,14 +41,14 @@ class YearUpadteBloc {
               await service.getMonthTotal(mYear, yYear, '1');
 
           if (data.isNotEmpty && data[0]['sum'] != null) {
-            tmpCredit = int.parse(data[0]['sum'].toString());
+            tmpCredit = double.parse(data[0]['sum'].toString());
           } else {
             tmpCredit = 0;
           }
           data = await service.getMonthTotal(mYear, yYear, '0');
 
           if (data.isNotEmpty && data[0]['sum'] != null) {
-            tmpDebit = int.parse(data[0]['sum'].toString());
+            tmpDebit = double.parse(data[0]['sum'].toString());
           } else {
             tmpDebit = 0;
           }
@@ -69,10 +72,10 @@ class YearUpadteBloc {
 
 class YearTotalBloc {
   final monthStateStreamController = StreamController<
-      List<MapEntry<DateTime, MapEntry<int, int>>>>.broadcast();
-  StreamSink<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateSink =>
-      monthStateStreamController.sink;
-  Stream<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateStream =>
+      List<MapEntry<DateTime, MapEntry<double, double>>>>.broadcast();
+  StreamSink<List<MapEntry<DateTime, MapEntry<double, double>>>>
+      get stateSink => monthStateStreamController.sink;
+  Stream<List<MapEntry<DateTime, MapEntry<double, double>>>> get stateStream =>
       monthStateStreamController.stream;
 
   final monthEventStreamController = StreamController<YearUpdate>();
@@ -80,10 +83,10 @@ class YearTotalBloc {
   Stream<YearUpdate> get eventStream => monthEventStreamController.stream;
 
   YearTotalBloc() {
-    int totalCredit;
-    int totalDebit;
+    double totalCredit;
+    double totalDebit;
     eventStream.listen((event) async {
-      List<MapEntry<DateTime, MapEntry<int, int>>> mappedYearTotal = [];
+      List<MapEntry<DateTime, MapEntry<double, double>>> mappedYearTotal = [];
       if (event == YearUpdate.getData) {
         DateTime date = dateSelected;
         String dYear = y.format(date).toString();

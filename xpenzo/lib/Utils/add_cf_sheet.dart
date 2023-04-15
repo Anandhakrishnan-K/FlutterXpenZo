@@ -119,7 +119,8 @@ class _AddCreditState extends State<AddCredit> {
                       builder: (context, snapshot) {
                         return TextFormField(
                           inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.allow(RegExp(
+                                r'^\d+\.?\d{0,2}')) // Starting with number | Optional decimal | upto 2 decimal places
                           ],
                           controller: amountController,
                           keyboardType: TextInputType.number,

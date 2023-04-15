@@ -10,9 +10,12 @@ import 'package:xpenso/BLoC/validation_bloc.dart';
 import 'package:xpenso/DataBase/data_model.dart';
 import 'package:xpenso/ListBuilders/day_list.dart';
 import 'package:xpenso/Utils/add_cf_sheet.dart';
+import 'package:xpenso/Utils/home_sliver.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:xpenso/main.dart';
+
+import '../BLoC/bloc_duration.dart';
 
 class AddCFButtons extends StatefulWidget {
   const AddCFButtons({super.key});
@@ -119,11 +122,13 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                       if (amountValid == true) {
                                         Ledger ledger = Ledger();
                                         ledger.amount =
-                                            int.parse(amountController.text);
+                                            double.parse(amountController.text);
                                         ledger.notes = notesController.text;
                                         ledger.categoryFlag =
                                             1; //Credit: 1 | Debit 0
                                         ledger.categoryIndex = catIndex;
+                                        ledger.category =
+                                            incomeNameList[catIndex];
                                         ledger.day =
                                             d.format(dateSelected).toString();
                                         ledger.month =
@@ -161,6 +166,8 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                             .add(DayUpdate.credit);
                                         dayTotalDebitBloc.eventSink
                                             .add(DayUpdate.debit);
+                                        getBalanceBloc.eventSink
+                                            .add(GetBal.get);
 
                                         debugPrint(
                                             '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Image: ${ledger.attachmentName}');
@@ -246,11 +253,12 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                 if (amountValid == true) {
                                   Ledger ledger = Ledger();
                                   ledger.amount =
-                                      int.parse(amountController.text);
+                                      double.parse(amountController.text);
                                   ledger.notes = notesController.text;
                                   ledger.categoryFlag =
                                       0; //Credit = 1 | Debit =0
                                   ledger.categoryIndex = catIndex;
+                                  ledger.category = expenseNameList[catIndex];
                                   ledger.day =
                                       d.format(dateSelected).toString();
                                   ledger.month =
@@ -284,6 +292,7 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                       .add(DayUpdate.credit);
                                   dayTotalDebitBloc.eventSink
                                       .add(DayUpdate.debit);
+                                  getBalanceBloc.eventSink.add(GetBal.get);
                                   debugPrint(
                                       '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
                                 }

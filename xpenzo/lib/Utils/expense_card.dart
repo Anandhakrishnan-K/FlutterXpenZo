@@ -67,7 +67,7 @@ class _ExpensecardDayState extends State<ExpensecardDay> {
                       height: height10,
                     ),
                     const MyText(
-                      content: 'Total Income',
+                      content: 'Income',
                       size: fontSizeSmall * 0.9,
                     )
                   ],
@@ -110,7 +110,7 @@ class _ExpensecardDayState extends State<ExpensecardDay> {
                       height: height10,
                     ),
                     const MyText(
-                      content: 'Total Expense',
+                      content: 'Expense',
                       size: fontSizeSmall * 0.9,
                     )
                   ],
@@ -144,7 +144,8 @@ class _ExpenseCardMonthState extends State<ExpenseCardMonth> {
       initialData: emptyTotalList,
       stream: monthTotalBloc.statestream,
       builder: (context, snapshot) {
-        List<MapEntry<DateTime, MapEntry<int, int>>> tmpData = snapshot.data!;
+        List<MapEntry<DateTime, MapEntry<double, double>>> tmpData =
+            snapshot.data!;
         return Container(
           padding: const EdgeInsetsDirectional.all(height20),
           height: mainTabHeight,
@@ -181,7 +182,7 @@ class _ExpenseCardMonthState extends State<ExpenseCardMonth> {
                           height: height10,
                         ),
                         const MyText(
-                          content: 'Total Income',
+                          content: 'Income',
                           size: fontSizeSmall * 0.9,
                         )
                       ],
@@ -218,7 +219,7 @@ class _ExpenseCardMonthState extends State<ExpenseCardMonth> {
                           height: height10,
                         ),
                         const MyText(
-                          content: 'Total Expense',
+                          content: 'Expense',
                           size: fontSizeSmall * 0.9,
                         )
                       ],
@@ -254,7 +255,8 @@ class _ExpenseCardYearState extends State<ExpenseCardYear> {
       initialData: emptyTotalList1,
       stream: yearTotalBloc.stateStream,
       builder: (context, snapshot) {
-        List<MapEntry<DateTime, MapEntry<int, int>>> tmpData = snapshot.data!;
+        List<MapEntry<DateTime, MapEntry<double, double>>> tmpData =
+            snapshot.data!;
         return Container(
           padding: const EdgeInsetsDirectional.all(height20),
           height: mainTabHeight,
@@ -291,7 +293,7 @@ class _ExpenseCardYearState extends State<ExpenseCardYear> {
                           height: height10,
                         ),
                         const MyText(
-                          content: 'Total Income',
+                          content: 'Income',
                           size: fontSizeSmall * 0.9,
                         )
                       ],
@@ -328,7 +330,7 @@ class _ExpenseCardYearState extends State<ExpenseCardYear> {
                           height: height10,
                         ),
                         const MyText(
-                          content: 'Total Expense',
+                          content: 'Expense',
                           size: fontSizeSmall * 0.9,
                         )
                       ],
@@ -408,7 +410,7 @@ class _ExpensecardDayMainPageState extends State<ExpensecardDayMainPage> {
                       height: height10,
                     ),
                     const MyText(
-                      content: 'Total Income',
+                      content: 'Income',
                       size: fontSizeSmall * 0.9,
                     )
                   ],
@@ -450,7 +452,7 @@ class _ExpensecardDayMainPageState extends State<ExpensecardDayMainPage> {
                       height: height10,
                     ),
                     const MyText(
-                      content: 'Total Expense',
+                      content: 'Expense',
                       size: fontSizeSmall * 0.9,
                     )
                   ],

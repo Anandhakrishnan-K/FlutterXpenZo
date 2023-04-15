@@ -37,7 +37,7 @@ class _MainHomePageState extends State<MainHomePage> {
                   backgroundColor: white,
                   elevation: 0,
                   pinned: true,
-                  expandedHeight: MediaQuery.of(context).size.height * 0.35,
+                  expandedHeight: MediaQuery.of(context).size.height * 0.5,
                   collapsedHeight: MediaQuery.of(context).size.height * 0.075,
                   flexibleSpace: FlexibleSpaceBar(
                     expandedTitleScale: 1,

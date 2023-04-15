@@ -16,8 +16,8 @@ import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 final yearBolc = YearBloc();
 final yearTotalListBloc = YearUpadteBloc();
 final yearTotalBloc = YearTotalBloc();
-List<MapEntry<DateTime, MapEntry<int, int>>> emptyMonthList = [];
-List<MapEntry<DateTime, MapEntry<int, int>>> emptyTotalList1 = [
+List<MapEntry<DateTime, MapEntry<double, double>>> emptyMonthList = [];
+List<MapEntry<DateTime, MapEntry<double, double>>> emptyTotalList1 = [
   MapEntry(DateTime.now(), const MapEntry(0, 0))
 ];
 
@@ -125,7 +125,7 @@ class _YearListState extends State<YearList> {
                 initialData: emptyMonthList,
                 stream: yearTotalListBloc.stateStream,
                 builder: (context, snapshot) {
-                  List<MapEntry<DateTime, MapEntry<int, int>>> tmpData =
+                  List<MapEntry<DateTime, MapEntry<double, double>>> tmpData =
                       snapshot.data!;
                   if (tmpData.isEmpty &&
                       snapshot.connectionState != ConnectionState.waiting) {

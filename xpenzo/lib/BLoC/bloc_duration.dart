@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:xpenso/constants/constant_variables.dart';
+import 'package:xpenso/main.dart';
 
 DateTime date = dateSelected;
 
@@ -89,6 +90,31 @@ class YearBloc {
       debugPrint(
           'From Year Bloc | Date Modified to : ${date.toString()} } | Original Date : ${dateSelected.toString()}');
       stateSink.add(date);
+    });
+  }
+}
+
+enum GetBal { get }
+
+class GetBalanceBloc {
+  final getBalStateStreamController = StreamController<double>.broadcast();
+  StreamSink<double> get stateSink => getBalStateStreamController.sink;
+  Stream<double> get stateStream => getBalStateStreamController.stream;
+
+  final getBalEventStreamController = StreamController<GetBal>();
+  StreamSink<GetBal> get eventSink => getBalEventStreamController.sink;
+  Stream<GetBal> get eventStream => getBalEventStreamController.stream;
+
+  double totalBal = 0.0;
+  GetBalanceBloc() {
+    eventStream.listen((event) async {
+      if (event == GetBal.get) {
+        List<Map<String, dynamic>> dataC = await service.getBalance(1);
+        List<Map<String, dynamic>> dataD = await service.getBalance(0);
+        totalBal = dataC[0]['sum'] - dataD[0]['sum'];
+      }
+      stateSink.add(totalBal);
+      debugPrint('Total Balance available: ${totalBal.toString()}');
     });
   }
 }

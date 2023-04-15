@@ -7,8 +7,8 @@ import 'package:xpenso/main.dart';
 enum DayUpdate { update, credit, debit }
 
 final List<Ledger> tmpData = [];
-int totalDayCredit = 0;
-int totalDayDebit = 0;
+double totalDayCredit = 0;
+double totalDayDebit = 0;
 
 //*************************** Day List BLoC ******************************/
 class DayUpdateBloc {
@@ -37,6 +37,7 @@ class DayUpdateBloc {
           dataModel.notes = ledger['notes'];
           dataModel.categoryIndex = ledger['categoryIndex'];
           dataModel.categoryFlag = ledger['categoryFlag'];
+          dataModel.category = ledger['category'];
           dataModel.day = ledger['day'];
           dataModel.month = ledger['month'];
           dataModel.year = ledger['year'];
@@ -63,9 +64,9 @@ class DayUpdateBloc {
 
 //************************* Day Total Credit BLoC *********************************/
 class DayTotalCreditBloc {
-  final dayStateStreamController = StreamController<int>.broadcast();
-  StreamSink<int> get stateSink => dayStateStreamController.sink;
-  Stream<int> get stateStream => dayStateStreamController.stream;
+  final dayStateStreamController = StreamController<double>.broadcast();
+  StreamSink<double> get stateSink => dayStateStreamController.sink;
+  Stream<double> get stateStream => dayStateStreamController.stream;
 
   final dayEventStreamController = StreamController<DayUpdate>();
   StreamSink<DayUpdate> get eventSink => dayEventStreamController.sink;
@@ -83,7 +84,7 @@ class DayTotalCreditBloc {
 
         //Null Check
         if (data.isNotEmpty && data[0]['sum'] != null) {
-          totalDayCredit = int.parse(data[0]['sum'].toString());
+          totalDayCredit = double.parse(data[0]['sum'].toString());
         } else {
           totalDayCredit = 0;
         }
@@ -102,9 +103,9 @@ class DayTotalCreditBloc {
 
 //************************* Day Total Debit BLoC *********************************/
 class DayTotalDebitBloc {
-  final dayStateStreamController = StreamController<int>.broadcast();
-  StreamSink<int> get stateSink => dayStateStreamController.sink;
-  Stream<int> get stateStream => dayStateStreamController.stream;
+  final dayStateStreamController = StreamController<double>.broadcast();
+  StreamSink<double> get stateSink => dayStateStreamController.sink;
+  Stream<double> get stateStream => dayStateStreamController.stream;
 
   final dayEventStreamController = StreamController<DayUpdate>();
   StreamSink<DayUpdate> get eventSink => dayEventStreamController.sink;
@@ -122,7 +123,7 @@ class DayTotalDebitBloc {
 
         //Null Check
         if (data.isNotEmpty && data[0]['sum'] != null) {
-          totalDayDebit = int.parse(data[0]['sum'].toString());
+          totalDayDebit = double.parse(data[0]['sum'].toString());
         } else {
           totalDayDebit = 0;
         }

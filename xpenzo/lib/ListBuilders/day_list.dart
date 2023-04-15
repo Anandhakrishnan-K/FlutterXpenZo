@@ -6,6 +6,7 @@ import 'package:xpenso/BLoC/bloc_day_update.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/DataBase/data_model.dart';
 import 'package:xpenso/Utils/duration_card.dart';
+import 'package:xpenso/Utils/home_sliver.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -306,6 +307,7 @@ class _DayListState extends State<DayList> {
                             dayUpdateBloc.eventSink.add(DayUpdate.update);
                             dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
                             dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
+                            getBalanceBloc.eventSink.add(GetBal.get);
 
                             // Display Snack bar when item deleted
 

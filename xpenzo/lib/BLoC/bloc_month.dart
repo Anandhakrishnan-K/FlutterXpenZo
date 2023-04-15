@@ -8,10 +8,14 @@ enum MonthUpdate { update, getdata }
 
 class MonthTotalListBloc {
   final monthStateStreamController = StreamController<
-      List<MapEntry<DateTime, MapEntry<int, int>>>>.broadcast();
-  StreamSink<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateSink =>
-      monthStateStreamController.sink;
-  Stream<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateStream =>
+      List<
+          MapEntry<
+              DateTime,
+              MapEntry<double,
+                  double>>>>.broadcast(); // List<MapEntry<DateTime, String>>>.
+  StreamSink<List<MapEntry<DateTime, MapEntry<double, double>>>>
+      get stateSink => monthStateStreamController.sink;
+  Stream<List<MapEntry<DateTime, MapEntry<double, double>>>> get stateStream =>
       monthStateStreamController.stream;
 
   final monthEventStreamController = StreamController<MonthUpdate>();
@@ -22,13 +26,13 @@ class MonthTotalListBloc {
     eventStream.listen((event) async {
       DateTime date = dateSelected;
       List<DateTime> tmpList = [];
-      List<MapEntry<DateTime, MapEntry<int, int>>> monthMappedList = [];
+      List<MapEntry<DateTime, MapEntry<double, double>>> monthMappedList = [];
       int n = DateTime(date.year, date.month + 1, 0).day;
       for (int i = 1; i <= n; i++) {
         tmpList.add(DateTime(date.year, date.month, i));
       }
-      int credittmp = 0;
-      int debitTmp = 0;
+      double credittmp = 0;
+      double debitTmp = 0;
       if (event == MonthUpdate.update) {
         for (int i = 0; i < tmpList.length; i++) {
           String mDay = d.format(tmpList[i]).toString();
@@ -39,7 +43,7 @@ class MonthTotalListBloc {
 
           //Null Check
           if (data.isNotEmpty && data[0]['sum'] != null) {
-            credittmp = int.parse(data[0]['sum'].toString());
+            credittmp = double.parse(data[0]['sum'].toString());
           } else {
             credittmp = 0;
           }
@@ -48,7 +52,7 @@ class MonthTotalListBloc {
 
           //Null Check
           if (data.isNotEmpty && data[0]['sum'] != null) {
-            debitTmp = int.parse(data[0]['sum'].toString());
+            debitTmp = double.parse(data[0]['sum'].toString());
           } else {
             debitTmp = 0;
           }
@@ -117,10 +121,10 @@ class MonthTotalListBloc {
 
 class MonthTotalBloc {
   final monthStateStreamController = StreamController<
-      List<MapEntry<DateTime, MapEntry<int, int>>>>.broadcast();
-  StreamSink<List<MapEntry<DateTime, MapEntry<int, int>>>> get stateSink =>
-      monthStateStreamController.sink;
-  Stream<List<MapEntry<DateTime, MapEntry<int, int>>>> get statestream =>
+      List<MapEntry<DateTime, MapEntry<double, double>>>>.broadcast();
+  StreamSink<List<MapEntry<DateTime, MapEntry<double, double>>>>
+      get stateSink => monthStateStreamController.sink;
+  Stream<List<MapEntry<DateTime, MapEntry<double, double>>>> get statestream =>
       monthStateStreamController.stream;
 
   final monthEventStreamController = StreamController<MonthUpdate>();
@@ -128,10 +132,10 @@ class MonthTotalBloc {
   Stream<MonthUpdate> get eventStream => monthEventStreamController.stream;
 
   MonthTotalBloc() {
-    int totalCredit;
-    int totalDebit;
+    double totalCredit;
+    double totalDebit;
     eventStream.listen((event) async {
-      List<MapEntry<DateTime, MapEntry<int, int>>> mappedMonthTotal = [];
+      List<MapEntry<DateTime, MapEntry<double, double>>> mappedMonthTotal = [];
       if (event == MonthUpdate.getdata) {
         DateTime date = dateSelected;
         String dMonth = m.format(date).toString();
