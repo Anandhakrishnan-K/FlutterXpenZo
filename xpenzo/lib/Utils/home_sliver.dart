@@ -9,6 +9,7 @@ import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:xpenso/main.dart';
 
 final getBalanceBloc = GetBalanceBloc();
+final isBalBloc = IsBalBloc();
 const String goodStr =
     'Looks like you\'ve got your expenses under control. Well done!';
 const String okStr =
@@ -29,6 +30,7 @@ class _HomeSliverState extends State<HomeSliver> {
   @override
   void initState() {
     getBalanceBloc.eventSink.add(GetBal.get);
+    isBalBloc.eventSink.add(GetBal.check);
     super.initState();
   }
 
@@ -160,7 +162,6 @@ class _HomeSliverState extends State<HomeSliver> {
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(height10)),
-            height: height100 * 1.1,
             child: StreamBuilder(
                 stream: getBalanceBloc.stateStream,
                 initialData: totalBal,
@@ -200,14 +201,35 @@ class _HomeSliverState extends State<HomeSliver> {
                       const SizedBox(
                         height: height10,
                       ),
-                      MyText(
-                        content: totalBal > 0
-                            ? goodStr
-                            : totalBal == 0
-                                ? okStr
-                                : badStr,
-                        maxlines: 2,
-                      )
+                      StreamBuilder(
+                          stream: isBalBloc.stateStream,
+                          initialData: true,
+                          builder: (context, snapshot) {
+                            return Visibility(
+                              visible: !snapshot.data!,
+                              child: MyText(
+                                content: totalBal > 0
+                                    ? goodStr
+                                    : totalBal == 0
+                                        ? okStr
+                                        : badStr,
+                                maxlines: 2,
+                              ),
+                            );
+                          }),
+                      StreamBuilder(
+                          stream: isBalBloc.stateStream,
+                          initialData: true,
+                          builder: (context, snapshot) {
+                            return Visibility(
+                              visible: snapshot.data!,
+                              child: const MyText(
+                                content:
+                                    'Welcome lets add some credit or debit',
+                                maxlines: 2,
+                              ),
+                            );
+                          })
                     ],
                   );
                 }),

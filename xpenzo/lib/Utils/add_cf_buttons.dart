@@ -168,6 +168,7 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                             .add(DayUpdate.debit);
                                         getBalanceBloc.eventSink
                                             .add(GetBal.get);
+                                        isBalBloc.eventSink.add(GetBal.check);
 
                                         debugPrint(
                                             '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Image: ${ledger.attachmentName}');
@@ -293,6 +294,7 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                   dayTotalDebitBloc.eventSink
                                       .add(DayUpdate.debit);
                                   getBalanceBloc.eventSink.add(GetBal.get);
+                                  isBalBloc.eventSink.add(GetBal.check);
                                   debugPrint(
                                       '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
                                 }

@@ -18,6 +18,12 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainHomePageState extends State<MainHomePage> {
+  @override
+  void initState() {
+    debugPrint('Main Home Page Initiated');
+    super.initState();
+  }
+
   bool navBar = false;
   @override
   Widget build(BuildContext context) {
@@ -37,8 +43,8 @@ class _MainHomePageState extends State<MainHomePage> {
                   backgroundColor: white,
                   elevation: 0,
                   pinned: true,
-                  expandedHeight: MediaQuery.of(context).size.height * 0.5,
-                  collapsedHeight: MediaQuery.of(context).size.height * 0.075,
+                  expandedHeight: deviceHeight * 0.5,
+                  collapsedHeight: kToolbarHeight,
                   flexibleSpace: FlexibleSpaceBar(
                     expandedTitleScale: 1,
                     background: const HomeSliver(),

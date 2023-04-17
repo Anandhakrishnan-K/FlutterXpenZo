@@ -91,7 +91,7 @@ class _DayListState extends State<DayList> {
         debugPrint('Nothing to delete');
       }
     } catch (e) {
-      debugPrint('Image Not Prrsent ${e.toString()}');
+      debugPrint('Image Not Present ${e.toString()}');
     }
   }
 
@@ -308,6 +308,7 @@ class _DayListState extends State<DayList> {
                             dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
                             dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
                             getBalanceBloc.eventSink.add(GetBal.get);
+                            isBalBloc.eventSink.add(GetBal.check);
 
                             // Display Snack bar when item deleted
 
@@ -446,16 +447,14 @@ class _DayListState extends State<DayList> {
                               );
                             },
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(top: height10 / 1.5),
-                              child: Container(
+                              padding: const EdgeInsets.only(bottom: height10),
+                              child: SizedBox(
                                 height: height80,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(height10),
-                                ),
                                 child: ListTile(
                                   title: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(
                                           width: deviceWidth / 8,
@@ -473,7 +472,7 @@ class _DayListState extends State<DayList> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                              MainAxisAlignment.center,
                                           children: [
                                             const SizedBox(
                                               height: height10 / 2,

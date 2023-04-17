@@ -94,7 +94,7 @@ class YearBloc {
   }
 }
 
-enum GetBal { get }
+enum GetBal { get, check }
 
 class GetBalanceBloc {
   final getBalStateStreamController = StreamController<double>.broadcast();
@@ -105,16 +105,57 @@ class GetBalanceBloc {
   StreamSink<GetBal> get eventSink => getBalEventStreamController.sink;
   Stream<GetBal> get eventStream => getBalEventStreamController.stream;
 
-  double totalBal = 0.0;
   GetBalanceBloc() {
     eventStream.listen((event) async {
+      double totalBal = 0.0;
+      double credit = 0.0;
+      double debit = 0.0;
       if (event == GetBal.get) {
         List<Map<String, dynamic>> dataC = await service.getBalance(1);
         List<Map<String, dynamic>> dataD = await service.getBalance(0);
-        totalBal = dataC[0]['sum'] - dataD[0]['sum'];
+        if (dataD[0]['sum'] != null) {
+          debit = dataD[0]['sum'];
+        }
+        if (dataC[0]['sum'] != null) {
+          credit = dataC[0]['sum'];
+        }
+        totalBal = credit - debit;
       }
       stateSink.add(totalBal);
       debugPrint('Total Balance available: ${totalBal.toString()}');
+    });
+  }
+}
+
+class IsBalBloc {
+  final getBalStateStreamController = StreamController<bool>.broadcast();
+  StreamSink<bool> get stateSink => getBalStateStreamController.sink;
+  Stream<bool> get stateStream => getBalStateStreamController.stream;
+
+  final getBalEventStreamController = StreamController<GetBal>();
+  StreamSink<GetBal> get eventSink => getBalEventStreamController.sink;
+  Stream<GetBal> get eventStream => getBalEventStreamController.stream;
+
+  IsBalBloc() {
+    eventStream.listen((event) async {
+      bool isbal = true;
+      double credit = 0.0;
+      double debit = 0.0;
+      if (event == GetBal.check) {
+        List<Map<String, dynamic>> dataC = await service.getBalance(1);
+        List<Map<String, dynamic>> dataD = await service.getBalance(0);
+        if (dataD[0]['sum'] != null) {
+          debit = dataD[0]['sum'];
+        }
+        if (dataC[0]['sum'] != null) {
+          credit = dataC[0]['sum'];
+        }
+        if (credit != 0 || debit != 0) {
+          isbal = false;
+        }
+      }
+      stateSink.add(isbal);
+      debugPrint('Total Balance available: ${isbal.toString()}');
     });
   }
 }

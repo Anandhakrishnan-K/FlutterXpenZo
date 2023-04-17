@@ -78,6 +78,7 @@ List<String> expenseNameList = [
   'Bills',
   'Snacks',
   'Veggies',
+  'Groceries',
   'Pets',
   'Mobile Bill',
   'Electricity',
