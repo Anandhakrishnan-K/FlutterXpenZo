@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpenso/BLoC/bloc_attach.dart';
@@ -25,7 +27,11 @@ class AddCredit extends StatefulWidget {
   final Function()? onPressedAt;
   final Function()? onPressedRm;
   final String submitButtonName;
+  final String? amt;
+  final String? notes;
   final List<Widget> list;
+  final bool? isUpdate;
+  final int? catIndex;
   const AddCredit(
       {super.key,
       required this.onPressed,
@@ -33,6 +39,10 @@ class AddCredit extends StatefulWidget {
       required this.list,
       required this.iscredit,
       this.onPressedAt,
+      this.amt,
+      this.notes,
+      this.catIndex,
+      this.isUpdate = false,
       required this.atFlag,
       this.onPressedRm});
 
@@ -41,11 +51,32 @@ class AddCredit extends StatefulWidget {
 }
 
 class _AddCreditState extends State<AddCredit> {
+  Future<void> deleteImage(String img) async {
+    try {
+      final imgPath = img;
+      if (imgPath.isNotEmpty) {
+        await File(imgPath).delete();
+        debugPrint('Image Deleted Sucessfully $imgPath');
+      } else {
+        debugPrint('Nothing to delete');
+      }
+    } catch (e) {
+      debugPrint('Image Not Present ${e.toString()}');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     amountController.clear();
     notesController.clear();
+    if (widget.isUpdate == true) {
+      setState(() {
+        amountController.text = widget.amt!;
+        notesController.text = widget.notes!;
+        selectedIndex1[widget.catIndex!] = !selectedIndex1[widget.catIndex!];
+      });
+    }
   }
 
   @override
@@ -92,7 +123,7 @@ class _AddCreditState extends State<AddCredit> {
                             '- 100'), // Button to subtract -100 form the textfield
                     onPressed: () {
                       if (amountController.text.isNotEmpty) {
-                        int tmp = int.parse(amountController.text);
+                        double tmp = double.parse(amountController.text);
                         if (tmp > 100) {
                           tmp -= 100;
                           setState(() {
@@ -153,7 +184,7 @@ class _AddCreditState extends State<AddCredit> {
                       amountController.text.isEmpty
                           ? amountController.text = '0'
                           : amountController.text;
-                      int tmp = int.parse(amountController.text);
+                      double tmp = double.parse(amountController.text);
                       tmp += 100;
                       setState(() {
                         amountController.text = tmp.toString();

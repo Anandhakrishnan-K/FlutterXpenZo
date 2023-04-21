@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:xpenso/BLoC/bloc_day_update.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/DataBase/data_model.dart';
+import 'package:xpenso/Utils/add_cf_buttons.dart';
 import 'package:xpenso/Utils/duration_card.dart';
 import 'package:xpenso/Utils/home_sliver.dart';
+import 'package:xpenso/Utils/update_cf_button.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -275,6 +277,7 @@ class _DayListState extends State<DayList> {
                                   ),
                                   actions: [
                                     MyButton(
+                                        borderColor: Colors.grey.shade300,
                                         content: const MyText(content: 'Back'),
                                         height: height50,
                                         textSize: fontSizeSmall,
@@ -282,6 +285,7 @@ class _DayListState extends State<DayList> {
                                           Navigator.of(context).pop(false);
                                         }),
                                     MyButton(
+                                        borderColor: Colors.grey.shade300,
                                         content:
                                             const MyText(content: 'Confirm'),
                                         height: height50,
@@ -340,31 +344,50 @@ class _DayListState extends State<DayList> {
                                 builder: (context) {
                                   return AlertDialog(
                                     actions: [
-                                      MyButton(
-                                          content:
-                                              const MyText(content: 'Update'),
-                                          onPressed: () {}),
-                                      MyButton(
-                                          content:
-                                              const MyText(content: 'Close'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          }),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: height20, right: height20),
+                                        child: UpdateButton(
+                                            id: dayList[index].id!,
+                                            amount: dayList[index]
+                                                .amount!
+                                                .toDouble(),
+                                            catIndex:
+                                                dayList[index].categoryIndex!,
+                                            attachFlg:
+                                                dayList[index].attachmentFlag!,
+                                            notes: dayList[index].notes!,
+                                            attName:
+                                                dayList[index].attachmentName!,
+                                            day: dayList[index].day!,
+                                            month: dayList[index].month!,
+                                            year: dayList[index].year!,
+                                            createdT: dayList[index].createdT!,
+                                            catFlg:
+                                                dayList[index].categoryFlag!),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: height20, right: height20),
+                                        child: MyButton(
+                                            borderColor: Colors.grey.shade300,
+                                            content:
+                                                const MyText(content: 'Close'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }),
+                                      ),
                                     ],
                                     title: Center(
-                                      child: MyText(
-                                        isHeader: true,
-                                        content:
-                                            'Amount:   ${dayList[index].amount.toString()}',
-                                        color: dayList[index].categoryFlag == 0
-                                            ? Colors.red
-                                            : Colors.green,
-                                      ),
-                                    ),
+                                        child: dayList[index].categoryFlag == 0
+                                            ? expenseList[
+                                                dayList[index].categoryIndex!]
+                                            : incomeList[
+                                                dayList[index].categoryIndex!]),
                                     content: SizedBox(
                                       height: image != null
                                           ? height100 * 4
-                                          : height100 * 1.5,
+                                          : height100 * 1.6,
                                       width: double.infinity,
                                       child: SingleChildScrollView(
                                         physics: const BouncingScrollPhysics(),
@@ -374,6 +397,19 @@ class _DayListState extends State<DayList> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            MyText(
+                                              isHeader: true,
+                                              content:
+                                                  'Amount:   ${dayList[index].amount.toString()}',
+                                              color:
+                                                  dayList[index].categoryFlag ==
+                                                          0
+                                                      ? Colors.red
+                                                      : Colors.green,
+                                            ),
+                                            const SizedBox(
+                                              height: height10,
+                                            ),
                                             MyText(
                                                 size: fontSizeSmall * 0.9,
                                                 content: dayList[index]
@@ -387,7 +423,7 @@ class _DayListState extends State<DayList> {
                                             MyText(
                                                 size: fontSizeSmall * 0.9,
                                                 content:
-                                                    'Date:    ${dayList[index].day} - ${dayList[index].month} - ${dayList[index].year}'),
+                                                    'Date:    ${dayList[index].day}-${dayList[index].month}-${dayList[index].year}'),
                                             const SizedBox(
                                               height: height10,
                                             ),
@@ -563,6 +599,7 @@ class _DayListState extends State<DayList> {
             ),
           ),
         ),
+        Visibility(visible: !widget.mainPage, child: const AddCFButtons())
       ],
     );
   }

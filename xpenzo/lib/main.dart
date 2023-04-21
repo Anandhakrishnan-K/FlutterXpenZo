@@ -151,7 +151,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(height20),
+        padding:
+            const EdgeInsets.only(bottom: height100, right: deviceWidth * 0.1),
         child: FloatingActionButton(
           elevation: 10,
           backgroundColor: appColor,

@@ -153,4 +153,8 @@ class Services {
   getYearChartData(year, flag) async {
     return await repo.getYearChartData('ledger_t', year, flag);
   }
+
+  updateCF(Ledger ledger) async {
+    return await repo.updateData('ledger_t', ledger.ledgerMap());
+  }
 }

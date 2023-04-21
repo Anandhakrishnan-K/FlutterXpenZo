@@ -31,9 +31,6 @@ class _ChartPageState extends State<ChartPage>
   @override
   void initState() {
     chartBloc.eventSink.add(Charts.monthIn);
-    // chartBloc.eventSink.add(Charts.monthOut);
-    // chartBloc.eventSink.add(Charts.yearIn);
-    // chartBloc.eventSink.add(Charts.yearOut);
     super.initState();
   }
 

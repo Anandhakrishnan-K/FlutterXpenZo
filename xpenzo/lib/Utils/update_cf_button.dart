@@ -17,7 +17,31 @@ import 'package:xpenso/constants/reuseable_widgets.dart';
 import 'package:xpenso/main.dart';
 
 class UpdateButton extends StatefulWidget {
-  const UpdateButton({super.key});
+  final int id;
+  final double amount;
+  final int catFlg;
+  final int catIndex;
+  final int attachFlg;
+  final String notes;
+  final String attName;
+  final String day;
+  final String month;
+  final String year;
+  final String createdT;
+
+  const UpdateButton(
+      {super.key,
+      required this.amount,
+      required this.catIndex,
+      required this.attachFlg,
+      required this.notes,
+      required this.attName,
+      required this.catFlg,
+      required this.day,
+      required this.month,
+      required this.year,
+      required this.createdT,
+      required this.id});
 
   @override
   State<UpdateButton> createState() => _UpdateButtonState();
@@ -35,16 +59,31 @@ class _UpdateButtonState extends State<UpdateButton> {
     return storedImage;
   }
 
+  Future<void> deleteImage(String img) async {
+    try {
+      final imgPath = img;
+      if (imgPath.isNotEmpty) {
+        await File(imgPath).delete();
+        debugPrint('Image Deleted Sucessfully $imgPath');
+      } else {
+        debugPrint('Nothing to delete');
+      }
+    } catch (e) {
+      debugPrint('Image Not Present ${e.toString()}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MyButton(
+        borderColor: Colors.grey.shade300,
         content: const MyText(content: 'Update'),
         onPressed: () {
-          attachFlag = 0;
-          attachName = 'NA';
-          amountController.clear();
-          notesController.clear();
           setState(() {
+            attachFlag = widget.attachFlg;
+            attachName = widget.attName;
+            amountController.text = widget.amount.toString();
+            notesController.text = widget.notes;
             amountValid = true;
             selectedIndex1 = List.filled(30, false);
             showModalBottomSheet(
@@ -59,7 +98,12 @@ class _UpdateButtonState extends State<UpdateButton> {
               builder: (context) {
                 return Padding(
                     padding: MediaQuery.of(context).viewInsets,
+                    //Calling Add CF Function Here
                     child: AddCredit(
+                      catIndex: widget.catIndex,
+                      isUpdate: true,
+                      amt: widget.amount.toString(),
+                      notes: widget.notes,
                       atFlag: attachFlag,
                       //Uplaod images
                       onPressedAt: () {
@@ -68,10 +112,12 @@ class _UpdateButtonState extends State<UpdateButton> {
                       },
                       onPressedRm: () {
                         attachmentBloc.eventSink.add(Attachment.remove);
+                        deleteImage(widget.attName);
                       },
-                      iscredit: true,
-                      list: expenseList,
-                      submitButtonName: 'Update',
+                      iscredit: widget.catFlg == 1 ? true : false,
+                      list: widget.catFlg == 1 ? incomeList : expenseList,
+                      submitButtonName:
+                          widget.catFlg == 1 ? 'Update Credit' : 'Update Debit',
                       onPressed: () async {
                         // ignore: prefer_typing_uninitialized_variables
                         var localImageFile;
@@ -94,41 +140,46 @@ class _UpdateButtonState extends State<UpdateButton> {
 
                         if (amountValid == true) {
                           Ledger ledger = Ledger();
+                          ledger.id = widget.id;
                           ledger.amount = double.parse(amountController.text);
                           ledger.notes = notesController.text;
-                          ledger.categoryFlag = 0; //Credit = 1 | Debit =0
+                          ledger.categoryFlag =
+                              widget.catFlg; //Credit = 1 | Debit =0
                           ledger.categoryIndex = catIndex;
-                          ledger.category = expenseNameList[catIndex];
-                          ledger.day = d.format(dateSelected).toString();
-                          ledger.month = m.format(dateSelected).toString();
-                          ledger.year = y.format(dateSelected).toString();
-                          ledger.createdT = DateTime.now().toString();
+                          ledger.category = catIndex == 1
+                              ? incomeNameList[catIndex]
+                              : expenseNameList[catIndex];
                           ledger.attachmentFlag =
                               attachFlag; //Attachment Flag temp set to 0
                           ledger.attachmentName =
                               attachFlag == 1 ? attachName : 'NA';
+                          ledger.day = widget.day;
+                          ledger.month = widget.month;
+                          ledger.year = widget.year;
+                          ledger.createdT = widget.createdT;
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              elevation: 0,
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: Colors.white,
-                              dismissDirection: DismissDirection.endToStart,
-                              duration: const Duration(seconds: 1),
-                              content: Center(
-                                child: MyText(
-                                  content:
-                                      'Debit Amount: ${ledger.amount} added successfully',
-                                  size: fontSizeSmall * 0.85,
-                                ),
-                              )));
-                          var result = await service.saveData(ledger);
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                                  elevation: 0,
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.white,
+                                  dismissDirection: DismissDirection.endToStart,
+                                  duration: Duration(seconds: 1),
+                                  content: Center(
+                                    child: MyText(
+                                      content: 'Record Updated Successfully',
+                                      size: fontSizeSmall * 0.85,
+                                    ),
+                                  )));
+                          var result = await service.updateCF(ledger);
                           dayUpdateBloc.eventSink.add(DayUpdate.update);
                           dayTotalCreditBloc.eventSink.add(DayUpdate.credit);
                           dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
                           getBalanceBloc.eventSink.add(GetBal.get);
                           isBalBloc.eventSink.add(GetBal.check);
                           debugPrint(
-                              '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
+                              '${result.toString()} Updated | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
                         }
                       },
                     ));
