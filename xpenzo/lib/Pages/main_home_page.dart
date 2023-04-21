@@ -7,8 +7,8 @@ import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
 
 //Getting User Name
-String fname = 'Anandhakrishnan';
-String lname = 'K';
+String fname = 'Guest';
+String lname = 'User';
 
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key});
