@@ -48,15 +48,34 @@ class UpdateButton extends StatefulWidget {
 }
 
 class _UpdateButtonState extends State<UpdateButton> {
+  bool isAttChange = false;
   Future<File> saveImage(File tmpImgae) async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final imgPath = '${appDir.path}/${DateTime.now().toString()}.png';
-    setState(() {
-      attachName = imgPath;
-    });
-    final storedImage = await tmpImgae.copy(imgPath);
-    debugPrint('Image Saved to Local');
-    return storedImage;
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final imgPath = '${appDir.path}/${DateTime.now().toString()}.png';
+      setState(() {
+        attachName = imgPath;
+      });
+      final storedImage = await tmpImgae.copy(imgPath);
+      debugPrint('Image Saved to Local');
+      return storedImage;
+    } catch (e) {
+      const storedImage = null;
+      debugPrint('Image Not Present ${e.toString()}');
+      return storedImage;
+    }
+  }
+
+  Future<void> deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+    final appDir = await getApplicationSupportDirectory();
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
+    debugPrint('Cache Cleared');
   }
 
   Future<void> deleteImage(String img) async {
@@ -80,6 +99,7 @@ class _UpdateButtonState extends State<UpdateButton> {
         content: const MyText(content: 'Update'),
         onPressed: () {
           setState(() {
+            isAttChange = false;
             attachFlag = widget.attachFlg;
             attachName = widget.attName;
             amountController.text = widget.amount.toString();
@@ -113,6 +133,9 @@ class _UpdateButtonState extends State<UpdateButton> {
                       onPressedRm: () {
                         attachmentBloc.eventSink.add(Attachment.remove);
                         deleteImage(widget.attName);
+                        setState(() {
+                          isAttChange = true;
+                        });
                       },
                       iscredit: widget.catFlg == 1 ? true : false,
                       list: widget.catFlg == 1 ? incomeList : expenseList,
@@ -121,14 +144,21 @@ class _UpdateButtonState extends State<UpdateButton> {
                       onPressed: () async {
                         // ignore: prefer_typing_uninitialized_variables
                         var localImageFile;
-                        attachFlag == 1
-                            ? {
-                                localImageFile =
-                                    await saveImage(File(pickedFile.path)),
-                                debugPrint(
-                                    'Image path: ${localImageFile.path}'),
-                              }
-                            : {debugPrint('No Bills (Images) to be uploaded')};
+
+                        try {
+                          attachFlag == 1 && isAttChange == true
+                              ? {
+                                  localImageFile =
+                                      await saveImage(File(pickedFile.path)),
+                                  debugPrint(
+                                      'Image path: ${localImageFile.path}'),
+                                }
+                              : {
+                                  debugPrint('No Bills (Images) to be uploaded')
+                                };
+                        } catch (e) {
+                          debugPrint('Path is Empty $e');
+                        }
                         setState(() {
                           amountController.text.isEmpty
                               ? amountValid = false
@@ -178,6 +208,7 @@ class _UpdateButtonState extends State<UpdateButton> {
                           dayTotalDebitBloc.eventSink.add(DayUpdate.debit);
                           getBalanceBloc.eventSink.add(GetBal.get);
                           isBalBloc.eventSink.add(GetBal.check);
+                          deleteCacheDir();
                           debugPrint(
                               '${result.toString()} Updated | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
                         }

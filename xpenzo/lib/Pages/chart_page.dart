@@ -392,6 +392,7 @@ class _ChartPageState extends State<ChartPage>
                                   fontSize: fontSizeSmall,
                                   fontWeight: FontWeight.w500)),
                           legend: Legend(
+                            overflowMode: LegendItemOverflowMode.wrap,
                             isVisible: true,
                             position: LegendPosition.bottom,
                           ),

@@ -36,6 +36,18 @@ class _AddCFButtonsState extends State<AddCFButtons> {
     return storedImage;
   }
 
+  Future<void> deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+    final appDir = await getApplicationSupportDirectory();
+    if (appDir.existsSync()) {
+      appDir.deleteSync(recursive: true);
+    }
+    debugPrint('Cache Cleared');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -295,6 +307,7 @@ class _AddCFButtonsState extends State<AddCFButtons> {
                                       .add(DayUpdate.debit);
                                   getBalanceBloc.eventSink.add(GetBal.get);
                                   isBalBloc.eventSink.add(GetBal.check);
+                                  deleteCacheDir();
                                   debugPrint(
                                       '${result.toString()} added to the list | amount: ${ledger.amount} | day: ${ledger.day} | Attachment: ${ledger.attachmentName}');
                                 }

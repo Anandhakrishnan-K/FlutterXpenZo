@@ -10,7 +10,6 @@ import 'package:xpenso/Pages/main_home_page.dart';
 import 'package:xpenso/Utils/data_table.dart';
 import 'package:xpenso/Utils/duration_card.dart';
 import 'package:xpenso/constants/constant_variables.dart';
-import 'package:xpenso/constants/reuseable_widgets.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
@@ -165,29 +164,29 @@ class _ReportPageState extends State<ReportPage> {
           const SizedBox(
             height: height30,
           ),
-          Visibility(
-              visible: duration == 'Month' ? true : false,
-              child: StreamBuilder(
-                  stream: monthBolc.stateStream,
-                  initialData: DateTime.now(),
-                  builder: (context, snapshot) {
-                    return MyText(
-                        content:
-                            'Displaying data for ${month.format(snapshot.data!).toString()}');
-                  })),
-          Visibility(
-              visible: duration == 'Year' ? true : false,
-              child: StreamBuilder(
-                  stream: yearBolc.stateStream,
-                  initialData: DateTime.now(),
-                  builder: (context, snapshot) {
-                    return MyText(
-                        content:
-                            'Displaying data for ${year.format(snapshot.data!).toString()}');
-                  })),
-          const SizedBox(
-            height: height30,
-          ),
+          // Visibility(
+          //     visible: duration == 'Month' ? true : false,
+          //     child: StreamBuilder(
+          //         stream: monthBolc.stateStream,
+          //         initialData: DateTime.now(),
+          //         builder: (context, snapshot) {
+          //           return MyText(
+          //               content:
+          //                   'Displaying data for ${month.format(snapshot.data!).toString()}');
+          //         })),
+          // Visibility(
+          //     visible: duration == 'Year' ? true : false,
+          //     child: StreamBuilder(
+          //         stream: yearBolc.stateStream,
+          //         initialData: DateTime.now(),
+          //         builder: (context, snapshot) {
+          //           return MyText(
+          //               content:
+          //                   'Displaying data for ${year.format(snapshot.data!).toString()}');
+          //         })),
+          // const SizedBox(
+          //   height: height30,
+          // ),
           Visibility(
               visible: duration == 'Month' ? true : false,
               child: const Expanded(child: DataTableCF())),
