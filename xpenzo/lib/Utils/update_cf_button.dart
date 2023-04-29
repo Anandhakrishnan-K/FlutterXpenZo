@@ -129,6 +129,9 @@ class _UpdateButtonState extends State<UpdateButton> {
                       onPressedAt: () {
                         //putImage();
                         attachmentBloc.eventSink.add(Attachment.add);
+                        setState(() {
+                          isAttChange = true;
+                        });
                       },
                       onPressedRm: () {
                         attachmentBloc.eventSink.add(Attachment.remove);
@@ -154,7 +157,8 @@ class _UpdateButtonState extends State<UpdateButton> {
                                       'Image path: ${localImageFile.path}'),
                                 }
                               : {
-                                  debugPrint('No Bills (Images) to be uploaded')
+                                  debugPrint(
+                                      'No Bills (Images) to be uploaded ${attachFlag.toString()}')
                                 };
                         } catch (e) {
                           debugPrint('Path is Empty $e');
@@ -176,7 +180,7 @@ class _UpdateButtonState extends State<UpdateButton> {
                           ledger.categoryFlag =
                               widget.catFlg; //Credit = 1 | Debit =0
                           ledger.categoryIndex = catIndex;
-                          ledger.category = catIndex == 1
+                          ledger.category = widget.catFlg == 1
                               ? incomeNameList[catIndex]
                               : expenseNameList[catIndex];
                           ledger.attachmentFlag =

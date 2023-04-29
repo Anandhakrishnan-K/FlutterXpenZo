@@ -75,6 +75,7 @@ class _AddCreditState extends State<AddCredit> {
         amountController.text = widget.amt!;
         notesController.text = widget.notes!;
         selectedIndex1[widget.catIndex!] = !selectedIndex1[widget.catIndex!];
+        catIndex = widget.catIndex!;
       });
     }
   }

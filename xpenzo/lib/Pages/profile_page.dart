@@ -27,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
         margin: const EdgeInsets.symmetric(horizontal: height20),
         child: Column(
           children: [
+            Expanded(child: SizedBox()),
             SizedBox(
               child: CircleAvatar(
                 radius: deviceWidth * 0.2,
@@ -124,6 +125,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 // MyText(content: 'Version V0.1')
               ],
             ),
+            SizedBox(
+              height: height20,
+            )
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:xpenso/BLoC/bloc_month.dart';
 import 'package:xpenso/BLoC/year_bloc.dart';
 import 'package:xpenso/ListBuilders/month_list.dart';
@@ -32,15 +33,24 @@ class _DataTableCFState extends State<DataTableCF> {
             List<MapEntry<DateTime, MapEntry<double, double>>> tmpData =
                 snapshot.data!;
 
-            List<DataRow> dataList = tmpData.map((entry) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(day.format(entry.key).toString())),
-                  DataCell(Text(entry.value.key.toString())),
-                  DataCell(Text(entry.value.value.toString())),
-                ],
-              );
-            }).toList();
+            List<DataRow> dataList = tmpData
+                .asMap()
+                .map((index, entry) {
+                  final isEven = index % 2 == 0;
+                  final color = isEven ? appColor : white;
+                  return MapEntry(
+                      index,
+                      DataRow(
+                        color: MaterialStateProperty.all(color),
+                        cells: [
+                          DataCell(Text(month.format(entry.key).toString())),
+                          DataCell(Text(entry.value.key.toString())),
+                          DataCell(Text(entry.value.value.toString())),
+                        ],
+                      ));
+                })
+                .values
+                .toList();
 
             if (tmpData.isEmpty &&
                 snapshot.connectionState != ConnectionState.waiting) {
@@ -77,23 +87,29 @@ class _DataTableCFState extends State<DataTableCF> {
                 totalExpense += tmpData[i].value.value;
               }
               return DataTable(
-                  // headingRowColor:
-                  //     MaterialStateColor.resolveWith((states) => appColor),
-                  headingRowHeight: height100,
-                  border: TableBorder.all(),
+                  dataRowHeight: 25,
+                  headingRowColor: MaterialStateColor.resolveWith(
+                    (states) => const Color(0xFF457b9d),
+                  ),
+                  headingRowHeight: height100 * 0.7,
+                  border: TableBorder.all(color: white),
                   columns: [
                     DataColumn(
                         label: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         MyText(
+                          color: white,
                           content: 'Date',
                           isHeader: true,
                         ),
                         SizedBox(
-                          height: height10,
+                          height: height10 / 2,
                         ),
-                        MyText(content: '(Total)')
+                        MyText(
+                          content: '(Total)',
+                          color: white,
+                        )
                       ],
                     )),
                     DataColumn(
@@ -102,12 +118,16 @@ class _DataTableCFState extends State<DataTableCF> {
                       children: [
                         const MyText(
                           content: 'Income',
+                          color: white,
                           isHeader: true,
                         ),
                         const SizedBox(
-                          height: height10,
+                          height: height10 / 2,
                         ),
-                        MyText(content: '(${totalIncome.toString()})')
+                        MyText(
+                          content: '(${totalIncome.toString()})',
+                          color: white,
+                        )
                       ],
                     )),
                     DataColumn(
@@ -116,12 +136,16 @@ class _DataTableCFState extends State<DataTableCF> {
                       children: [
                         const MyText(
                           content: 'Expense',
+                          color: white,
                           isHeader: true,
                         ),
                         const SizedBox(
-                          height: height10,
+                          height: height10 / 2,
                         ),
-                        MyText(content: '(${totalExpense.toString()})')
+                        MyText(
+                          content: '(${totalExpense.toString()})',
+                          color: white,
+                        )
                       ],
                     )),
                   ],
@@ -156,15 +180,25 @@ class _DataTableCFYearState extends State<DataTableCFYear> {
             List<MapEntry<DateTime, MapEntry<double, double>>> tmpData =
                 snapshot.data!;
 
-            List<DataRow> dataList = tmpData.map((entry) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(month.format(entry.key).toString())),
-                  DataCell(Text(entry.value.key.toString())),
-                  DataCell(Text(entry.value.value.toString())),
-                ],
-              );
-            }).toList();
+            List<DataRow> dataList = tmpData
+                .asMap()
+                .map((index, entry) {
+                  final isEven = index % 2 == 0;
+                  final color = isEven ? white : appColor;
+                  return MapEntry(
+                      index,
+                      DataRow(
+                        color: MaterialStateProperty.all(color),
+                        cells: [
+                          DataCell(Text(month.format(entry.key).toString())),
+                          DataCell(Text(entry.value.key.toString())),
+                          DataCell(Text(entry.value.value.toString())),
+                        ],
+                      ));
+                })
+                .values
+                .toList();
+
             if (tmpData.isEmpty &&
                 snapshot.connectionState != ConnectionState.waiting) {
               return SizedBox(
@@ -201,6 +235,8 @@ class _DataTableCFYearState extends State<DataTableCFYear> {
               }
               return DataTable(
                   // headingRowColor:
+                  //     MaterialStateColor.resolveWith((states) => appColor),
+                  // dataRowColor:
                   //     MaterialStateColor.resolveWith((states) => appColor),
                   headingRowHeight: height100,
                   border: TableBorder.all(),

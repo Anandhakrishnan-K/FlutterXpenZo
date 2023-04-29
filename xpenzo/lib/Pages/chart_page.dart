@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:xpenso/BLoC/bloc_charts.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/BLoC/bloc_month.dart';
@@ -13,11 +11,12 @@ import 'package:xpenso/Pages/main_home_page.dart';
 import 'package:xpenso/Utils/duration_card.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 //Object for Chart Bloc
 final chartBloc = ChartBloc();
 //Empty List
-List<Map<String, dynamic>> emtChartList = [];
+List<PieChartSectionData> emtChartList = [];
 
 class ChartPage extends StatefulWidget {
   const ChartPage({super.key});
@@ -357,7 +356,7 @@ class _ChartPageState extends State<ChartPage>
                     initialData: emtChartList,
                     stream: chartBloc.stateStream,
                     builder: (context, snapshot) {
-                      List<Map<String, dynamic>> tmpList = snapshot.data!;
+                      List<PieChartSectionData> tmpList = snapshot.data!;
                       if (tmpList.isEmpty &&
                           snapshot.connectionState != ConnectionState.waiting) {
                         return SizedBox(
@@ -383,31 +382,18 @@ class _ChartPageState extends State<ChartPage>
                           ),
                         );
                       } else {
-                        return SfCircularChart(
-                          enableMultiSelection: true,
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          title: ChartTitle(
-                              text: '$type Chart',
-                              textStyle: GoogleFonts.poppins(
-                                  fontSize: fontSizeSmall,
-                                  fontWeight: FontWeight.w500)),
-                          legend: Legend(
-                            overflowMode: LegendItemOverflowMode.wrap,
-                            isVisible: true,
-                            position: LegendPosition.bottom,
+                        return AspectRatio(
+                          aspectRatio: 1,
+                          child: PieChart(
+                            PieChartData(
+                              startDegreeOffset: 0,
+                              sectionsSpace: 3,
+                              centerSpaceRadius: 5,
+                              sections: tmpList,
+                            ),
+                            swapAnimationCurve: Curves.easeIn,
+                            swapAnimationDuration: const Duration(seconds: 2),
                           ),
-                          series: [
-                            PieSeries<Map<String, dynamic>, String>(
-                                explode: true,
-                                explodeIndex: 0,
-                                dataLabelSettings:
-                                    const DataLabelSettings(isVisible: true),
-                                dataSource: tmpList,
-                                xValueMapper: (Map<String, dynamic> data, _) =>
-                                    data['category'],
-                                yValueMapper: (Map<String, dynamic> data, _) =>
-                                    data['sum'])
-                          ],
                         );
                       }
                     }),
@@ -443,3 +429,23 @@ class _ChartPageState extends State<ChartPage>
     );
   }
 }
+
+//FOR Trial Purpose
+
+// List<int> a = [1, 3, 0, 6, 2, 4, 7, 5, 8];
+// double batPos = 0.99;
+// double titPos = 0.5;
+// double ntoc = 150;
+// double toc = 160;
+
+// PieChartSectionData(
+//             color: expenseColorList[0],
+//             value: 25,
+//             badgeWidget: expenseList[0],
+//             badgePositionPercentageOffset: batPos,
+//             radius: isTouched ? toc : ntoc,
+//             titlePositionPercentageOffset: titPos,
+//             borderSide: isTouched
+//                 ? const BorderSide(color: Colors.black, width: 1)
+//                 : const BorderSide(color: white),
+//           )

@@ -98,6 +98,31 @@ List<String> expenseNameList = [
   'Travel'
 ];
 
+List<Color> expenseColorList = [
+  const Color(0xFF48CAE4),
+  const Color(0xFFFFADAD),
+  const Color(0xFFFFD6A5),
+  const Color(0xFFFDFFB6),
+  const Color(0xFF15616D),
+  const Color(0xFFCAFFBF),
+  const Color(0xFF9BF6FF),
+  const Color(0xFFC6AD94),
+  const Color(0xFFA0C4FF),
+  const Color(0xFF354F52),
+  const Color(0xFFBDB2FF),
+  const Color(0xFFFFC6FF),
+  const Color(0xFFA5ABAF),
+  const Color(0xFFBDE0FE),
+  const Color(0xFFDDE5B6),
+  const Color(0xFFFF7F51),
+  const Color(0xFFA98467),
+  const Color(0xFF9D8189),
+  const Color(0xFFFBF8CC),
+  const Color(0xFFFDE4CF),
+  const Color(0xFF84A98C),
+  const Color(0xFFFFEEDD),
+];
+
 List<Widget> incomeList = [
   const MyImageIcon(path: 'assets/icons/misc.png', name: 'Misc'),
   const MyImageIcon(path: 'assets/icons/salary.png', name: 'Salary'),
