@@ -93,12 +93,11 @@ class _HomeSliverState extends State<HomeSliver> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const HomePage(),
-                        ),
-                        (route) => false);
+                        ));
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -113,12 +112,11 @@ class _HomeSliverState extends State<HomeSliver> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const ChartPage(),
-                        ),
-                        (route) => false);
+                        ));
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -133,12 +131,11 @@ class _HomeSliverState extends State<HomeSliver> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const ReportPage(),
-                        ),
-                        (route) => false);
+                        ));
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

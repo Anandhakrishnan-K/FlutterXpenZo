@@ -63,159 +63,176 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-        backgroundColor: transparent,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: height50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  width: deviceWidth * 0.2,
-                ),
-                DropdownButton<String>(
-                  elevation: 1,
-                  value: duration,
-                  onChanged: (String? newValue) {
-                    dayBloc.eventSink.add(DayEvent.jump0);
-                    setState(() {
-                      duration = newValue!;
-                    });
+    return WillPopScope(
+      onWillPop: () async {
+        dayBloc.eventSink.add(DayEvent.jump0);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainHomePage(),
+            ),
+            (route) => false);
+        debugPrint('Coming Back to Main Home Page by back Button');
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                dayBloc.eventSink.add(DayEvent.jump0);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainHomePage(),
+                    ),
+                    (route) => false);
+              },
+              icon: const Icon(Icons.arrow_back)),
+          centerTitle: true,
+          title: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              elevation: 1,
+              value: duration,
+              onChanged: (String? newValue) {
+                dayBloc.eventSink.add(DayEvent.jump0);
+                setState(() {
+                  duration = newValue!;
+                });
+              },
+              items: <String>['Month', 'Year']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+          toolbarHeight: height50,
+          backgroundColor: transparent,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: height30,
+              ),
+              Visibility(
+                visible: duration == 'Month' ? true : false,
+                child: StreamBuilder(
+                  stream: monthBolc.stateStream,
+                  initialData: dateSelected,
+                  builder: (context, snapshot) {
+                    DateTime tmpDate = snapshot.data!;
+                    return DurationCard(
+                        onPressedPlus: () {
+                          monthBolc.eventSink.add(MonthEvent.add);
+                          monthTotalBloc.eventSink.add(MonthUpdate.getdata);
+                          monthTotalListBloc.eventSink.add(MonthUpdate.update);
+                        },
+                        onPressedMinus: () {
+                          monthBolc.eventSink.add(MonthEvent.minus);
+                          monthTotalBloc.eventSink.add(MonthUpdate.getdata);
+                          monthTotalListBloc.eventSink.add(MonthUpdate.update);
+                        },
+                        onPressedJump: () {
+                          monthBolc.eventSink.add(MonthEvent.jump0);
+                          monthTotalBloc.eventSink.add(MonthUpdate.getdata);
+                          monthTotalListBloc.eventSink.add(MonthUpdate.update);
+                          pickDate(context);
+                        },
+                        content: month.format(tmpDate));
                   },
-                  items: <String>['Month', 'Year']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
-                const SizedBox(
-                  width: deviceWidth * 0.2,
+              ),
+              Visibility(
+                visible: duration == 'Year' ? true : false,
+                child: StreamBuilder(
+                  stream: yearBolc.stateStream,
+                  initialData: DateTime.now(),
+                  builder: (context, snapshot) {
+                    DateTime tmpDate = snapshot.data!;
+                    return DurationCard(
+                        onPressedPlus: () {
+                          yearBolc.eventSink.add(YearEvent.add);
+                          yearTotalBloc.eventSink.add(YearUpdate.getData);
+                          yearTotalListBloc.eventSink.add(YearUpdate.update);
+                        },
+                        onPressedMinus: () {
+                          yearBolc.eventSink.add(YearEvent.minus);
+                          yearTotalBloc.eventSink.add(YearUpdate.getData);
+                          yearTotalListBloc.eventSink.add(YearUpdate.update);
+                        },
+                        onPressedJump: () {
+                          yearBolc.eventSink.add(YearEvent.jump0);
+                          yearTotalBloc.eventSink.add(YearUpdate.getData);
+                          yearTotalListBloc.eventSink.add(YearUpdate.update);
+                          pickYear(context);
+                        },
+                        content: year.format(tmpDate));
+                  },
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: height20,
-          ),
-          Visibility(
-            visible: duration == 'Month' ? true : false,
-            child: StreamBuilder(
-              stream: monthBolc.stateStream,
-              initialData: dateSelected,
-              builder: (context, snapshot) {
-                DateTime tmpDate = snapshot.data!;
-                return DurationCard(
-                    onPressedPlus: () {
-                      monthBolc.eventSink.add(MonthEvent.add);
-                      monthTotalBloc.eventSink.add(MonthUpdate.getdata);
-                      monthTotalListBloc.eventSink.add(MonthUpdate.update);
-                    },
-                    onPressedMinus: () {
-                      monthBolc.eventSink.add(MonthEvent.minus);
-                      monthTotalBloc.eventSink.add(MonthUpdate.getdata);
-                      monthTotalListBloc.eventSink.add(MonthUpdate.update);
-                    },
-                    onPressedJump: () {
-                      monthBolc.eventSink.add(MonthEvent.jump0);
-                      monthTotalBloc.eventSink.add(MonthUpdate.getdata);
-                      monthTotalListBloc.eventSink.add(MonthUpdate.update);
-                      pickDate(context);
-                    },
-                    content: month.format(tmpDate));
-              },
-            ),
-          ),
-          Visibility(
-            visible: duration == 'Year' ? true : false,
-            child: StreamBuilder(
-              stream: yearBolc.stateStream,
-              initialData: DateTime.now(),
-              builder: (context, snapshot) {
-                DateTime tmpDate = snapshot.data!;
-                return DurationCard(
-                    onPressedPlus: () {
-                      yearBolc.eventSink.add(YearEvent.add);
-                      yearTotalBloc.eventSink.add(YearUpdate.getData);
-                      yearTotalListBloc.eventSink.add(YearUpdate.update);
-                    },
-                    onPressedMinus: () {
-                      yearBolc.eventSink.add(YearEvent.minus);
-                      yearTotalBloc.eventSink.add(YearUpdate.getData);
-                      yearTotalListBloc.eventSink.add(YearUpdate.update);
-                    },
-                    onPressedJump: () {
-                      yearBolc.eventSink.add(YearEvent.jump0);
-                      yearTotalBloc.eventSink.add(YearUpdate.getData);
-                      yearTotalListBloc.eventSink.add(YearUpdate.update);
-                      pickYear(context);
-                    },
-                    content: year.format(tmpDate));
-              },
-            ),
-          ),
-          const SizedBox(
-            height: height30,
-          ),
-          // Visibility(
-          //     visible: duration == 'Month' ? true : false,
-          //     child: StreamBuilder(
-          //         stream: monthBolc.stateStream,
-          //         initialData: DateTime.now(),
-          //         builder: (context, snapshot) {
-          //           return MyText(
-          //               content:
-          //                   'Displaying data for ${month.format(snapshot.data!).toString()}');
-          //         })),
-          // Visibility(
-          //     visible: duration == 'Year' ? true : false,
-          //     child: StreamBuilder(
-          //         stream: yearBolc.stateStream,
-          //         initialData: DateTime.now(),
-          //         builder: (context, snapshot) {
-          //           return MyText(
-          //               content:
-          //                   'Displaying data for ${year.format(snapshot.data!).toString()}');
-          //         })),
-          // const SizedBox(
-          //   height: height30,
-          // ),
-          Visibility(
-              visible: duration == 'Month' ? true : false,
-              child: const Expanded(child: DataTableCF())),
-          Visibility(
-              visible: duration == 'Year' ? true : false,
-              child: const Expanded(child: DataTableCFYear())),
-        ],
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(height20),
-        child: FloatingActionButton(
-          elevation: 10,
-          backgroundColor: appColor,
-          onPressed: () {
-            dayBloc.eventSink.add(DayEvent.jump0);
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MainHomePage(),
-                ),
-                (route) => false);
-          },
-          child: Image.asset(
-            'assets/icons/back.png',
-            scale: 20,
+              ),
+              const SizedBox(
+                height: height30,
+              ),
+              // Visibility(
+              //     visible: duration == 'Month' ? true : false,
+              //     child: StreamBuilder(
+              //         stream: monthBolc.stateStream,
+              //         initialData: DateTime.now(),
+              //         builder: (context, snapshot) {
+              //           return MyText(
+              //               content:
+              //                   'Displaying data for ${month.format(snapshot.data!).toString()}');
+              //         })),
+              // Visibility(
+              //     visible: duration == 'Year' ? true : false,
+              //     child: StreamBuilder(
+              //         stream: yearBolc.stateStream,
+              //         initialData: DateTime.now(),
+              //         builder: (context, snapshot) {
+              //           return MyText(
+              //               content:
+              //                   'Displaying data for ${year.format(snapshot.data!).toString()}');
+              //         })),
+              // const SizedBox(
+              //   height: height30,
+              // ),
+              Visibility(
+                  visible: duration == 'Month' ? true : false,
+                  child: const Expanded(child: DataTableCF())),
+              Visibility(
+                  visible: duration == 'Year' ? true : false,
+                  child: const Expanded(child: DataTableCFYear())),
+            ],
           ),
         ),
+        // floatingActionButton: Padding(
+        //   padding: const EdgeInsets.all(height20),
+        //   child: FloatingActionButton(
+        //     elevation: 10,
+        //     backgroundColor: appColor,
+        //     onPressed: () {
+        //       dayBloc.eventSink.add(DayEvent.jump0);
+        //       Navigator.pushAndRemoveUntil(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (context) => const MainHomePage(),
+        //           ),
+        //           (route) => false);
+        //     },
+        //     child: Image.asset(
+        //       'assets/icons/back.png',
+        //       scale: 20,
+        //     ),
+        //   ),
+        // ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
     );
   }
 }

@@ -88,13 +88,13 @@ class Repository {
   getMonthChartData(table, mon, year, flag) async {
     var connection = await database;
     return await connection?.rawQuery(
-        'Select sum(amount) as sum ,categoryIndex as category from $table where month = \'${mon.toString()}\' and year = \'${year.toString()}\' and categoryFlag =\'${flag.toString()}\' group by categoryIndex');
+        'Select sum(amount) as sum ,categoryIndex as category from $table where month = \'${mon.toString()}\' and year = \'${year.toString()}\' and categoryFlag =\'${flag.toString()}\' group by categoryIndex order by 1 desc');
   }
 
   getYearChartData(table, year, flag) async {
     var connection = await database;
     return await connection?.rawQuery(
-        'Select sum(amount) as sum ,categoryIndex as category from $table where  year = \'${year.toString()}\' and categoryFlag =\'${flag.toString()}\' group by categoryIndex');
+        'Select sum(amount) as sum ,categoryIndex as category from $table where  year = \'${year.toString()}\' and categoryFlag =\'${flag.toString()}\' group by categoryIndex order by 1 desc');
   }
 
   //Balance Available

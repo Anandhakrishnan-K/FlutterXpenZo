@@ -83,95 +83,119 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-
-//**************************** App Bar ****************************/
-
-      appBar: AppBar(
-        centerTitle: true,
-        foregroundColor: black,
-        backgroundColor: appColor,
-        elevation: 0,
-        title: const SwitchCard(),
-        // actions: [
-        //   Container(
-        //     padding: const EdgeInsets.only(right: deviceWidth * 0.05),
-        //     child: IconButton(
-        //         onPressed: () {
-        //           Navigator.pushAndRemoveUntil(
-        //               context,
-        //               MaterialPageRoute(
-        //                 builder: (context) => const MainHomePage(),
-        //               ),
-        //               (route) => false);
-        //         },
-        //         icon: const Icon(Icons.home)),
-        //   ),
-        // ],
-      ),
-
-//*********************************  Body  ****************************/
-
-      body: Container(
-        color: appColor,
-        child: Column(
-          children: [
-            SizedBox(
-              height: mainTabHeight,
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: cardPageController,
-                children: const [
-                  ExpensecardDay(),
-                  ExpenseCardMonth(),
-                  ExpenseCardYear()
-                ],
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        dayBloc.eventSink.add(DayEvent.jump0);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainHomePage(),
             ),
-            Expanded(
-                child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(height20),
-                      topRight: Radius.circular(height20)),
-                  color: white),
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: listPageController,
-                children: const [
-                  DayList(),
-                  MonthList(),
-                  YearList(),
-                ],
-              ),
-            ))
-          ],
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding:
-            const EdgeInsets.only(bottom: height100, right: deviceWidth * 0.1),
-        child: FloatingActionButton(
-          elevation: 10,
+            (route) => false);
+        debugPrint('Coming Back to Main Home Page by back Button');
+        return false;
+      },
+      child: Scaffold(
+        extendBody: true,
+
+        //**************************** App Bar ****************************/
+
+        appBar: AppBar(
+          centerTitle: true,
+          foregroundColor: black,
           backgroundColor: appColor,
-          onPressed: () {
-            dayBloc.eventSink.add(DayEvent.jump0);
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MainHomePage(),
+          elevation: 0,
+          title: const SwitchCard(),
+          leading: IconButton(
+              onPressed: () {
+                dayBloc.eventSink.add(DayEvent.jump0);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainHomePage(),
+                    ),
+                    (route) => false);
+              },
+              icon: const Icon(Icons.arrow_back)),
+          // actions: [
+          //   Container(
+          //     padding: const EdgeInsets.only(right: deviceWidth * 0.05),
+          //     child: IconButton(
+          //         onPressed: () {
+          //           Navigator.pushAndRemoveUntil(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder: (context) => const MainHomePage(),
+          //               ),
+          //               (route) => false);
+          //         },
+          //         icon: const Icon(Icons.home)),
+          //   ),
+          // ],
+        ),
+
+        //*********************************  Body  ****************************/
+
+        body: Container(
+          color: appColor,
+          child: Column(
+            children: [
+              SizedBox(
+                height: mainTabHeight,
+                child: PageView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: cardPageController,
+                  children: const [
+                    ExpensecardDay(),
+                    ExpenseCardMonth(),
+                    ExpenseCardYear()
+                  ],
                 ),
-                (route) => false);
-          },
-          child: Image.asset(
-            'assets/icons/back.png',
-            scale: 20,
+              ),
+              Expanded(
+                  child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(height20),
+                        topRight: Radius.circular(height20)),
+                    color: white),
+                child: PageView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: listPageController,
+                  children: const [
+                    DayList(),
+                    MonthList(),
+                    YearList(),
+                  ],
+                ),
+              ))
+            ],
           ),
         ),
+        // floatingActionButton: Padding(
+        //   padding:
+        //       const EdgeInsets.only(bottom: height100, right: deviceWidth * 0.1),
+        //   child: FloatingActionButton(
+        //     elevation: 10,
+        //     backgroundColor: appColor,
+        //     onPressed: () {
+        //       dayBloc.eventSink.add(DayEvent.jump0);
+        //       Navigator.pushAndRemoveUntil(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (context) => const MainHomePage(),
+        //           ),
+        //           (route) => false);
+        //     },
+        //     child: Image.asset(
+        //       'assets/icons/back.png',
+        //       scale: 20,
+        //     ),
+        //   ),
+        // ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
     );
   }
 }
