@@ -153,3 +153,6 @@ DateFormat m = DateFormat('MMM');
 DateFormat y = DateFormat('yyyy');
 //For detailed view
 DateFormat dateWithTime = DateFormat('dd-MM-yy    hh:mm a ');
+//For Report File Name
+
+DateFormat reportFormat = DateFormat('dd_MMM_yy_HH_mm');

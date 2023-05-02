@@ -40,6 +40,9 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   image_picker: ^0.8.7
   fl_chart: ^0.62.0
+  excel: ^2.1.0
+  permission_handler: ^8.3.0
+  pdf: ^3.10.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -467,7 +467,7 @@ class _ChartPageState extends State<ChartPage>
                 ),
               ),
               const SizedBox(
-                height: height40,
+                height: height20,
               ),
               StreamBuilder(
                   stream: chartSummaryBloc.stateStream,
@@ -476,7 +476,7 @@ class _ChartPageState extends State<ChartPage>
                     List<MapEntry<int, double>> tmpChartSummaryList =
                         snapshot.data!;
                     return SizedBox(
-                      height: height100 * 2.5,
+                      height: height100 * 3,
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemCount: tmpChartSummaryList.length,
@@ -511,7 +511,7 @@ class _ChartPageState extends State<ChartPage>
                     );
                   }),
               const SizedBox(
-                height: height10,
+                height: height20,
               ),
             ],
           ),

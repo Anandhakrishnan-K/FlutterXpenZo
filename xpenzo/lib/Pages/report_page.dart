@@ -9,7 +9,11 @@ import 'package:xpenso/ListBuilders/year_list.dart';
 import 'package:xpenso/Pages/main_home_page.dart';
 import 'package:xpenso/Utils/data_table.dart';
 import 'package:xpenso/Utils/duration_card.dart';
+import 'package:xpenso/Utils/excel_creation.dart';
+import 'package:xpenso/Utils/pdf_creation.dart';
+import 'package:xpenso/Utils/year_report_excel_creation.dart';
 import 'package:xpenso/constants/constant_variables.dart';
+import 'package:xpenso/constants/reuseable_widgets.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
@@ -208,6 +212,49 @@ class _ReportPageState extends State<ReportPage> {
               Visibility(
                   visible: duration == 'Year' ? true : false,
                   child: const Expanded(child: DataTableCFYear())),
+
+              const MyText(content: 'Download Report as:'),
+              const SizedBox(
+                height: height20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Visibility(
+                    visible: duration == 'Month' ? true : false,
+                    child: const SizedBox(
+                      height: height100,
+                      child: CreateExcelReportButton(),
+                    ),
+                  ),
+                  Visibility(
+                    visible: duration == 'Year' ? true : false,
+                    child: const SizedBox(
+                      height: height100,
+                      child: CreateExcelReportYearButton(),
+                    ),
+                  ),
+                  const MyText(content: 'OR'),
+                  Visibility(
+                    visible: duration == 'Month' ? true : false,
+                    child: const SizedBox(
+                      height: height100,
+                      child: CreatePdfReportButton(),
+                    ),
+                  ),
+                  Visibility(
+                    visible: duration == 'Year' ? true : false,
+                    child: const SizedBox(
+                      height: height100,
+                      child: CreatePdfYearReportButton(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: height20,
+              ),
             ],
           ),
         ),
