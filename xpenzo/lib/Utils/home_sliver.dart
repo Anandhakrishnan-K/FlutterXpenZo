@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
+import 'package:xpenso/BLoC/profile_picture_bloc.dart';
 import 'package:xpenso/Pages/chart_page.dart';
-import 'package:xpenso/Pages/main_home_page.dart';
 import 'package:xpenso/Pages/profile_page.dart';
 import 'package:xpenso/Pages/report_page.dart';
 import 'package:xpenso/constants/constant_variables.dart';
@@ -31,7 +33,21 @@ class _HomeSliverState extends State<HomeSliver> {
   void initState() {
     getBalanceBloc.eventSink.add(GetBal.get);
     isBalBloc.eventSink.add(GetBal.check);
+    setUserDetails();
+    profileUpdateBloc.eventSink.add(ProfileUpdate.update);
     super.initState();
+  }
+
+  Future<void> setUserDetails() async {
+    String tmpF = await user.getFirstName();
+    String tmpL = await user.getLastName();
+    String tmpP = await user.getProfilePath();
+    setState(() {
+      fname = tmpF;
+      lname = tmpL;
+      profilePath = tmpP;
+    });
+    debugPrint('$fname , $lname , $profilePath');
   }
 
   @override
@@ -73,13 +89,32 @@ class _HomeSliverState extends State<HomeSliver> {
                       ),
                       (route) => false);
                 },
-                child: CircleAvatar(
-                  radius: height30,
-                  child: Image.asset(
-                    'assets/icons/man.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                child: StreamBuilder(
+                    stream: profileUpdateBloc.stateStream,
+                    initialData: profilePic,
+                    builder: (context, snapshot) {
+                      if (snapshot.data != null) {
+                        File tmpProfilePic = snapshot.data!;
+                        return SizedBox(
+                          child: CircleAvatar(
+                            backgroundImage:
+                                profilePath == 'assets/icons/man.png'
+                                    ? null
+                                    : FileImage(tmpProfilePic),
+                            radius: deviceWidth * 0.1,
+                          ),
+                        );
+                      } else {
+                        return SizedBox(
+                          child: CircleAvatar(
+                            radius: deviceWidth * 0.1,
+                            child: profilePath == 'assets/icons/man.png'
+                                ? Image.asset(profilePath)
+                                : null,
+                          ),
+                        );
+                      }
+                    }),
               )
             ],
           ),

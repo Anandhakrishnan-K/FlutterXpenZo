@@ -212,6 +212,9 @@ class _ReportPageState extends State<ReportPage> {
               Visibility(
                   visible: duration == 'Year' ? true : false,
                   child: const Expanded(child: DataTableCFYear())),
+              const SizedBox(
+                height: height10,
+              ),
 
               const MyText(content: 'Download Report as:'),
               const SizedBox(
@@ -253,7 +256,7 @@ class _ReportPageState extends State<ReportPage> {
                 ],
               ),
               const SizedBox(
-                height: height20,
+                height: height10,
               ),
             ],
           ),

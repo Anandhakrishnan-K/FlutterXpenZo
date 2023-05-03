@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/ListBuilders/day_list.dart';
+import 'package:xpenso/Pages/profile_page.dart';
 import 'package:xpenso/Utils/add_cf_buttons.dart';
 import 'package:xpenso/Utils/expense_card.dart';
 import 'package:xpenso/Utils/home_sliver.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
-
-//Getting User Name
-String fname = 'Guest';
-String lname = 'User';
 
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key});
@@ -24,7 +21,20 @@ class _MainHomePageState extends State<MainHomePage> {
   void initState() {
     dayBloc.eventSink.add(DayEvent.jump0);
     debugPrint('Main Home Page Initiated');
+    setUserDetails();
     super.initState();
+  }
+
+  Future<void> setUserDetails() async {
+    String tmpF = await user.getFirstName();
+    String tmpL = await user.getLastName();
+    String tmpP = await user.getProfilePath();
+    setState(() {
+      fname = tmpF;
+      lname = tmpL;
+      profilePath = tmpP;
+    });
+    debugPrint('$fname , $lname , $profilePath');
   }
 
   bool navBar = false;

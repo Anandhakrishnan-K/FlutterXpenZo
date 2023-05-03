@@ -70,6 +70,8 @@ class _AddCreditState extends State<AddCredit> {
     super.initState();
     amountController.clear();
     notesController.clear();
+    selectedIndex1 = List.filled(30, false);
+    catIndex = 0;
     if (widget.isUpdate == true) {
       setState(() {
         amountController.text = widget.amt!;

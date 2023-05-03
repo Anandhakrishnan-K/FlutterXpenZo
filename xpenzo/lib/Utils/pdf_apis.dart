@@ -39,34 +39,32 @@ Future<void> savePDFFile(
   // Creating the PDF Document
   final pdf = pw.Document();
 
-  pdf.addPage(pw.Page(
+  pdf.addPage(pw.MultiPage(
     build: (context) {
-      return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Center(
-              child: pw.Header(
-                  padding: const pw.EdgeInsets.all(height10),
-                  textStyle: const pw.TextStyle(fontSize: fontSizeBig * 1.2),
-                  text:
-                      'Monthly Report - ${month.format(inputList[0].key).toString()}'),
-            ),
-            pw.SizedBox(height: height20),
-            pw.Text('Date: ${day.format(DateTime.now()).toString()}'),
-            pw.SizedBox(height: height10),
-            pw.Text('Income: ${incomeTotal.toStringAsFixed(2)}'),
-            pw.SizedBox(height: height10),
-            pw.Text('Expense: ${expenseTotal.toStringAsFixed(2)}'),
-            pw.SizedBox(height: height20),
-            pw.Text('Summary:'),
-            pw.SizedBox(height: height10),
-            pw.Table.fromTextArray(
-                headers: header,
-                data: data,
-                headerStyle: pw.TextStyle(color: PdfColor.fromHex('#FFFFFF')),
-                headerCellDecoration:
-                    pw.BoxDecoration(color: PdfColor.fromHex('#457b9d'))),
-          ]);
+      return [
+        pw.Center(
+          child: pw.Header(
+              padding: const pw.EdgeInsets.all(height10),
+              textStyle: const pw.TextStyle(fontSize: fontSizeBig * 1.2),
+              text:
+                  'Monthly Report - ${month.format(inputList[0].key).toString()}'),
+        ),
+        pw.SizedBox(height: height20),
+        pw.Text('Date: ${day.format(DateTime.now()).toString()}'),
+        pw.SizedBox(height: height10),
+        pw.Text('Income: ${incomeTotal.toStringAsFixed(2)}'),
+        pw.SizedBox(height: height10),
+        pw.Text('Expense: ${expenseTotal.toStringAsFixed(2)}'),
+        pw.SizedBox(height: height20),
+        pw.Text('Summary:'),
+        pw.SizedBox(height: height10),
+        pw.Table.fromTextArray(
+            headers: header,
+            data: data,
+            headerStyle: pw.TextStyle(color: PdfColor.fromHex('#FFFFFF')),
+            headerCellDecoration:
+                pw.BoxDecoration(color: PdfColor.fromHex('#457b9d'))),
+      ];
     },
   ));
 

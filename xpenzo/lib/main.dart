@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     debugPrint('Home Page Initstate Called | HomePage Initiated');
+
     deleteCacheDir();
     super.initState();
   }
