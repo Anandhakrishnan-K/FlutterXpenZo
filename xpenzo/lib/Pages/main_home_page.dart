@@ -34,7 +34,7 @@ class _MainHomePageState extends State<MainHomePage> {
       lname = tmpL;
       profilePath = tmpP;
     });
-    debugPrint('$fname , $lname , $profilePath');
+    debugPrint('From Main Home Page $fname , $lname , $profilePath');
   }
 
   bool navBar = false;

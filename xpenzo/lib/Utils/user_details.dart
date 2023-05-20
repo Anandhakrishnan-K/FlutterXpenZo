@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile {
+  saveFirstLastName(String fname, String lname) async {
+    // To save a string value
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('firstName', fname);
+    await prefs.setString('lastname', lname);
+    debugPrint('$fname , $lname');
+  }
+
   saveFirstName(String fname) async {
     // To save a string value
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -50,5 +58,18 @@ class UserProfile {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? path = prefs.getString('picturePath');
     return path ?? 'assets/icons/man.png';
+  }
+
+  saveFirstTimeInfo(bool str) async {
+    // To save a string value
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('firstTime', str);
+  }
+
+  Future<bool> getFirstTimeInformation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? name = prefs.getBool('firstTime');
+    debugPrint('From Shared Preference Funtion: $name');
+    return name ?? true;
   }
 }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xpenso/BLoC/bloc_duration.dart';
 import 'package:xpenso/DataBase/db_connnection.dart';
 import 'package:xpenso/ListBuilders/day_list.dart';
 import 'package:xpenso/ListBuilders/month_list.dart';
 import 'package:xpenso/ListBuilders/year_list.dart';
 import 'package:xpenso/Pages/main_home_page.dart';
+import 'package:xpenso/Pages/onboarding_screen.dart';
+import 'package:xpenso/Pages/splash_screen.dart';
 import 'package:xpenso/Utils/switch_card.dart';
 import 'Utils/expense_card.dart';
 import 'constants/constant_variables.dart';
@@ -30,12 +33,17 @@ int listindex = 0;
 //Service Reference
 final service = Services();
 
-//************************ Main Page Starts Here ************************/
+//************************ Main Program Starts Here ************************/
 
-void main() {
+Future main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: transparent,
   ));
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final fisrtTime = prefs.getBool('firstTime') ?? true;
+
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
@@ -44,7 +52,7 @@ void main() {
         splashFactory: NoSplash.splashFactory,
         focusColor: transparent,
         highlightColor: transparent),
-    home: const MainHomePage(),
+    home: fisrtTime ? const MyOnboardingScreen() : const MySplashScreen(),
   ));
 }
 

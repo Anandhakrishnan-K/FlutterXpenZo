@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "xpenzo" "\0"
+            VALUE "FileDescription", "Xpenzo" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "xpenzo" "\0"
+            VALUE "InternalName", "Xpenzo" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "xpenzo.exe" "\0"
-            VALUE "ProductName", "xpenzo" "\0"
+            VALUE "ProductName", "Xpenzo" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

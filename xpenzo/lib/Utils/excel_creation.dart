@@ -4,31 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:xpenso/ListBuilders/month_list.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 import 'package:xpenso/constants/reuseable_widgets.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 List<MapEntry<DateTime, MapEntry<double, double>>> emptyList = [];
 
-Future<bool> _requestPermission() async {
-  if (Platform.isAndroid) {
-    final permissionStatus = await Permission.manageExternalStorage.status;
-    if (permissionStatus != PermissionStatus.granted) {
-      final result = await Permission.manageExternalStorage.request();
-      if (result != PermissionStatus.granted) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
+// Future<bool> _requestPermission() async {
+//   if (Platform.isAndroid) {
+//     debugPrint('Getting Permission');
+//     final permissionStatus = await Permission.storage.status;
+//     if (permissionStatus != PermissionStatus.granted) {
+//       debugPrint('Permission Not Granted');
+//       final result = await Permission.storage.request();
+//       final permissionStatusdebug = await Permission.storage.status;
+//       debugPrint(permissionStatusdebug.toString());
+
+//       if (result != PermissionStatus.granted) {
+//         return false;
+//       }
+//     }
+//   }
+//   return true;
+// }
 
 Future<void> saveExcelFile(
     List<MapEntry<DateTime, MapEntry<double, double>>> inputList) async {
   // Request the WRITE_EXTERNAL_STORAGE permission at runtime
-  if (Platform.isAndroid) {
-    if (!(await _requestPermission())) {
-      return;
-    }
-  }
+  // if (Platform.isAndroid) {
+  //   if (!(await _requestPermission())) {
+  //     return;
+  //   }
+  // }
   // Create a new Excel document
   final excel = Excel.createExcel();
 

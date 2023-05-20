@@ -95,19 +95,20 @@ class _HomeSliverState extends State<HomeSliver> {
                     builder: (context, snapshot) {
                       if (snapshot.data != null) {
                         File tmpProfilePic = snapshot.data!;
-                        return SizedBox(
+                        return Container(
+                          padding: const EdgeInsets.only(right: height10),
                           child: CircleAvatar(
                             backgroundImage:
                                 profilePath == 'assets/icons/man.png'
                                     ? null
                                     : FileImage(tmpProfilePic),
-                            radius: deviceWidth * 0.1,
+                            radius: deviceWidth * 0.08,
                           ),
                         );
                       } else {
                         return SizedBox(
                           child: CircleAvatar(
-                            radius: deviceWidth * 0.1,
+                            radius: deviceWidth * 0.08,
                             child: profilePath == 'assets/icons/man.png'
                                 ? Image.asset(profilePath)
                                 : null,

@@ -2,21 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:xpenso/constants/constant_variables.dart';
 
-Future<bool> _requestPermission() async {
-  if (Platform.isAndroid) {
-    final permissionStatus = await Permission.manageExternalStorage.status;
-    if (permissionStatus != PermissionStatus.granted) {
-      final result = await Permission.manageExternalStorage.request();
-      if (result != PermissionStatus.granted) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
+// Future<bool> _requestPermission() async {
+//   if (Platform.isAndroid) {
+//     final permissionStatus = await Permission.storage.status;
+//     if (permissionStatus != PermissionStatus.granted) {
+//       final result = await Permission.storage.request();
+//       if (result != PermissionStatus.granted) {
+//         return false;
+//       }
+//     }
+//   }
+//   return true;
+// }
 
 Future<void> savePDFFile(
     List<MapEntry<DateTime, MapEntry<double, double>>> inputList) async {
@@ -31,11 +30,11 @@ Future<void> savePDFFile(
       .map((e) => [day.format(e.key), e.value.key, e.value.value])
       .toList();
   // Request the WRITE_EXTERNAL_STORAGE permission at runtime
-  if (Platform.isAndroid) {
-    if (!(await _requestPermission())) {
-      return;
-    }
-  }
+  // if (Platform.isAndroid) {
+  //   if (!(await _requestPermission())) {
+  //     return;
+  //   }
+  // }
   // Creating the PDF Document
   final pdf = pw.Document();
 
@@ -94,11 +93,11 @@ Future<void> savePDFFileYear(
       .map((e) => [month.format(e.key), e.value.key, e.value.value])
       .toList();
   // Request the WRITE_EXTERNAL_STORAGE permission at runtime
-  if (Platform.isAndroid) {
-    if (!(await _requestPermission())) {
-      return;
-    }
-  }
+  // if (Platform.isAndroid) {
+  //   if (!(await _requestPermission())) {
+  //     return;
+  //   }
+  // }
   // Creating the PDF Document
   final pdf = pw.Document();
 
