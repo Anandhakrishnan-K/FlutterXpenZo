@@ -14,7 +14,7 @@ import 'package:xpenso/Utils/switch_card.dart';
 import 'Utils/expense_card.dart';
 import 'constants/constant_variables.dart';
 
-//double back delay
+//double back dela
 // var dTime;
 
 //Main Page Controllers
